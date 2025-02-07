@@ -4,3 +4,4 @@ from subgatekit.domain.enums import SubscriptionStatus, Period
 from subgatekit.domain.plan import Plan
 from subgatekit.domain.usage import UsageRate, Usage
 from subgatekit.domain.discount import Discount
+from subgatekit.domain.events import EventCode

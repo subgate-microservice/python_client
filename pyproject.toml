@@ -3,7 +3,7 @@ name = "subgatekit"
 description = "Python client for Subgate Microservice"
 authors = ["barmatey"]
 readme = "README.md"
-version = "0.1.0"
+version = "0.1.2"
 license = "MIT"
 
 [tool.poetry.dependencies]

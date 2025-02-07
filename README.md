@@ -13,5 +13,5 @@ Subgate Client is the official client library for interacting with Subgate, an o
 Install the library via [PyPI](https://pypi.org/project/subgate_client/):
 
 ```bash
-pip install subgate-client
+pip install subgatekit
 ```
