@@ -1,0 +1,11 @@
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/python_client.iml
+/.idea/vcs.xml
+/dist/subgate-0.1.0.tar.gz
+/dist/subgate-0.1.0-py3-none-any.whl
+/dist
+/.idea
