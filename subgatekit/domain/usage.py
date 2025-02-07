@@ -1,7 +1,7 @@
 from typing import Self
 
-from subgate_client.domain.cycle import Cycle
-from subgate_client.domain.enums import Period
+from subgatekit.domain.cycle import Cycle
+from subgatekit.domain.enums import Period
 
 
 class UsageRate:

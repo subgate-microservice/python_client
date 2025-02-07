@@ -1,13 +1,13 @@
 import datetime
 from typing import Optional, Iterable
 
-from subgate_client.client.base_client import OrderBy, _build_query_params, AsyncBaseClient, SyncBaseClient
-from subgate_client.domain.enums import SubscriptionStatus
-from subgate_client.domain.plan import ID, Plan
-from subgate_client.domain.subscription import Subscription, SubscriptionCreate
-from subgate_client.domain.usage import Usage, UsageForm
-from subgate_client.services import serializers, deserializers
-from subgate_client.services.validators import validate
+from subgatekit.client.base_client import OrderBy, _build_query_params, AsyncBaseClient, SyncBaseClient
+from subgatekit.domain.enums import SubscriptionStatus
+from subgatekit.domain.plan import ID, Plan
+from subgatekit.domain.subscription import Subscription, SubscriptionCreate
+from subgatekit.domain.usage import Usage, UsageForm
+from subgatekit.services import serializers, deserializers
+from subgatekit.services.validators import validate
 
 
 class AsyncSubscriptionClient:

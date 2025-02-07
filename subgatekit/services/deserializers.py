@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from subgate_client.domain.cycle import Cycle
-from subgate_client.domain.discount import Discount
-from subgate_client.domain.plan import Plan, ID
-from subgate_client.domain.subscription import Subscription
-from subgate_client.domain.usage import UsageRate, Usage, UsageForm
-from subgate_client.domain.webhook import Webhook
+from subgatekit.domain.cycle import Cycle
+from subgatekit.domain.discount import Discount
+from subgatekit.domain.plan import Plan, ID
+from subgatekit.domain.subscription import Subscription
+from subgatekit.domain.usage import UsageRate, Usage, UsageForm
+from subgatekit.domain.webhook import Webhook
 
 
 def deserialize_cycle(data: dict) -> Cycle:

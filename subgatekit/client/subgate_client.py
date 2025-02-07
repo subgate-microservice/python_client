@@ -1,7 +1,7 @@
-from subgate_client.client.base_client import AsyncBaseClient, SyncBaseClient
-from subgate_client.client.plan_client import AsyncPlanClient, SyncPlanClient
-from subgate_client.client.subscription_client import AsyncSubscriptionClient, SyncSubscriptionClient
-from subgate_client.client.webhook_client import AsyncWebhookClient, SyncWebhookClient
+from subgatekit.client.base_client import AsyncBaseClient, SyncBaseClient
+from subgatekit.client.plan_client import AsyncPlanClient, SyncPlanClient
+from subgatekit.client.subscription_client import AsyncSubscriptionClient, SyncSubscriptionClient
+from subgatekit.client.webhook_client import AsyncWebhookClient, SyncWebhookClient
 
 
 class AsyncSubgateClient:

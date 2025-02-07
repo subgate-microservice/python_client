@@ -1,9 +1,9 @@
-from subgate_client.client.base_client import SyncBaseClient, AsyncBaseClient
-from subgate_client.domain.plan import ID
-from subgate_client.domain.webhook import Webhook, WebhookCreate, WebhookUpdate
-from subgate_client.domain.events import EventCode
-from subgate_client.services import serializers, deserializers
-from subgate_client.services.validators import validate
+from subgatekit.client.base_client import SyncBaseClient, AsyncBaseClient
+from subgatekit.domain.plan import ID
+from subgatekit.domain.webhook import Webhook, WebhookCreate, WebhookUpdate
+from subgatekit.domain.events import EventCode
+from subgatekit.services import serializers, deserializers
+from subgatekit.services.validators import validate
 
 
 class AsyncWebhookClient:

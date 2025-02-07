@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-from subgate_client.domain.enums import SubscriptionStatus
-from subgate_client.domain.plan import ID, Plan
-from subgate_client.domain.usage import Usage
+from subgatekit.domain.enums import SubscriptionStatus
+from subgatekit.domain.plan import ID, Plan
+from subgatekit.domain.usage import Usage
 
 
 class Subscription:

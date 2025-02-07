@@ -1,9 +1,9 @@
-from subgate_client.domain.cycle import Cycle
-from subgate_client.domain.discount import Discount
-from subgate_client.domain.plan import Plan, PlanCreate
-from subgate_client.domain.subscription import SubscriptionCreate, Subscription
-from subgate_client.domain.usage import UsageRate, Usage, UsageForm
-from subgate_client.domain.webhook import Webhook, WebhookCreate, WebhookUpdate
+from subgatekit.domain.cycle import Cycle
+from subgatekit.domain.discount import Discount
+from subgatekit.domain.plan import Plan, PlanCreate
+from subgatekit.domain.subscription import SubscriptionCreate, Subscription
+from subgatekit.domain.usage import UsageRate, Usage, UsageForm
+from subgatekit.domain.webhook import Webhook, WebhookCreate, WebhookUpdate
 
 
 def serialize_cycle(item: Cycle) -> dict:

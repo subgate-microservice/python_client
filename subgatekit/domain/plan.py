@@ -2,11 +2,11 @@ import datetime
 from typing import Any
 from uuid import UUID, uuid4
 
-from subgate_client.domain.cycle import Cycle
-from subgate_client.domain.discount import Discount
-from subgate_client.domain.enums import Period
-from subgate_client.domain.usage import UsageRate
-from subgate_client.utils import get_current_datetime
+from subgatekit.domain.cycle import Cycle
+from subgatekit.domain.discount import Discount
+from subgatekit.domain.enums import Period
+from subgatekit.domain.usage import UsageRate
+from subgatekit.utils import get_current_datetime
 
 ID = UUID
 

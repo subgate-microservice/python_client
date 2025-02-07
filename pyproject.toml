@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "subgate_client"
+name = "subgatekit"
 description = "Python client for Subgate Microservice"
 authors = ["barmatey"]
 readme = "README.md"

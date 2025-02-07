@@ -5,15 +5,15 @@ from enum import StrEnum
 from types import NoneType
 from typing import Any, Type, Union, Iterable, Optional
 
-from subgate_client.client.exceptions import ValidationError, MultipleError
-from subgate_client.domain.cycle import Cycle
-from subgate_client.domain.enums import Period, SubscriptionStatus
-from subgate_client.domain.discount import Discount
-from subgate_client.domain.events import EventCode
-from subgate_client.domain.plan import Plan, ID, PlanCreate
-from subgate_client.domain.subscription import Subscription, SubscriptionCreate
-from subgate_client.domain.usage import UsageRate, Usage
-from subgate_client.domain.webhook import Webhook, WebhookCreate, WebhookUpdate
+from subgatekit.client.exceptions import ValidationError, MultipleError
+from subgatekit.domain.cycle import Cycle
+from subgatekit.domain.enums import Period, SubscriptionStatus
+from subgatekit.domain.discount import Discount
+from subgatekit.domain.events import EventCode
+from subgatekit.domain.plan import Plan, ID, PlanCreate
+from subgatekit.domain.subscription import Subscription, SubscriptionCreate
+from subgatekit.domain.usage import UsageRate, Usage
+from subgatekit.domain.webhook import Webhook, WebhookCreate, WebhookUpdate
 
 
 class Validator(ABC):
