@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from subgate.domain.events import EventCode
-from subgate.domain.plan import ID
+from subgate_client.domain.events import EventCode
+from subgate_client.domain.plan import ID
 
 
 class Webhook:

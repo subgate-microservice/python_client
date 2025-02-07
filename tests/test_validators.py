@@ -3,14 +3,14 @@ from uuid import uuid4
 
 import pytest
 
-from subgate.client.exceptions import ValidationError, MultipleError
-from subgate.domain.cycle import Cycle
-from subgate.domain.discount import Discount
-from subgate.domain.enums import Period, SubscriptionStatus
-from subgate.domain.plan import Plan
-from subgate.domain.subscription import Subscription
-from subgate.services.validators import validate
-from subgate.utils import get_current_datetime
+from subgate_client.client.exceptions import ValidationError, MultipleError
+from subgate_client.domain.cycle import Cycle
+from subgate_client.domain.discount import Discount
+from subgate_client.domain.enums import Period, SubscriptionStatus
+from subgate_client.domain.plan import Plan
+from subgate_client.domain.subscription import Subscription
+from subgate_client.services.validators import validate
+from subgate_client.utils import get_current_datetime
 
 
 def fake_plan():

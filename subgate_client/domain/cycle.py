@@ -1,4 +1,4 @@
-from subgate.domain.enums import Period
+from subgate_client.domain.enums import Period
 
 
 class Cycle:

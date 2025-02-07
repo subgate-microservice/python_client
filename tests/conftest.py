@@ -5,8 +5,8 @@ from uuid import uuid4
 import pytest
 import pytest_asyncio
 
-from subgate.client.subgate_client import SubgateClient, AsyncSubgateClient
-from subgate.domain.events import EventCode
+from subgate_client.client.subgate_client import SubgateClient, AsyncSubgateClient
+from subgate_client.domain.events import EventCode
 
 CLIENT_BASE_URL = "http://localhost:3000/api/v1"
 CLIENT_APIKEY_VALUE = "TEST_APIKEY_VALUE"

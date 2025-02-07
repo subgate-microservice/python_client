@@ -4,9 +4,9 @@ from typing import Optional, Iterable, Literal
 
 import httpx
 
-from subgate.client.exceptions import ItemNotExist, ItemAlreadyExist
-from subgate.domain.enums import SubscriptionStatus
-from subgate.domain.plan import ID
+from subgate_client.client.exceptions import ItemNotExist, ItemAlreadyExist
+from subgate_client.domain.enums import SubscriptionStatus
+from subgate_client.domain.plan import ID
 
 OrderBy = list[tuple[str, Literal[1, -1]]]
 

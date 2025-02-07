@@ -2,9 +2,9 @@ import datetime
 
 import pytest
 
-from subgate.domain.events import EventCode
-from subgate.domain.plan import ID
-from subgate.domain.webhook import Webhook
+from subgate_client.domain.events import EventCode
+from subgate_client.domain.plan import ID
+from subgate_client.domain.webhook import Webhook
 from tests.conftest import webhooks, client, wrapper
 
 

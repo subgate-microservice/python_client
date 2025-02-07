@@ -5,10 +5,10 @@ from uuid import uuid4
 
 import pytest
 
-from subgate.client.exceptions import ItemNotExist, MultipleError, ValidationError, ItemAlreadyExist
-from subgate.domain.enums import Period, SubscriptionStatus
-from subgate.domain.subscription import Subscription
-from subgate.domain.usage import Usage, UsageRate
+from subgate_client.client.exceptions import ItemNotExist, MultipleError, ValidationError, ItemAlreadyExist
+from subgate_client.domain.enums import Period, SubscriptionStatus
+from subgate_client.domain.subscription import Subscription
+from subgate_client.domain.usage import Usage, UsageRate
 from tests.conftest import fake_plan, subs, client, wrapper
 
 

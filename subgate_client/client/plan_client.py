@@ -1,12 +1,12 @@
 from typing import Optional, Iterable, Any
 
-from subgate.client.base_client import OrderBy, _build_query_params, AsyncBaseClient, SyncBaseClient
-from subgate.domain.enums import Period
-from subgate.domain.discount import Discount
-from subgate.domain.plan import Plan, ID, PlanCreate
-from subgate.domain.usage import UsageRate
-from subgate.services import serializers, deserializers
-from subgate.services.validators import validate
+from subgate_client.client.base_client import OrderBy, _build_query_params, AsyncBaseClient, SyncBaseClient
+from subgate_client.domain.enums import Period
+from subgate_client.domain.discount import Discount
+from subgate_client.domain.plan import Plan, ID, PlanCreate
+from subgate_client.domain.usage import UsageRate
+from subgate_client.services import serializers, deserializers
+from subgate_client.services.validators import validate
 
 
 class AsyncPlanClient:

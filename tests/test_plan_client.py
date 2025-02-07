@@ -2,12 +2,12 @@ from datetime import timedelta
 
 import pytest
 
-from subgate.client.exceptions import ItemAlreadyExist, ValidationError
-from subgate.domain.enums import Period
-from subgate.domain.discount import Discount
-from subgate.domain.plan import Plan
-from subgate.domain.usage import UsageRate
-from subgate.utils import get_current_datetime
+from subgate_client.client.exceptions import ItemAlreadyExist, ValidationError
+from subgate_client.domain.enums import Period
+from subgate_client.domain.discount import Discount
+from subgate_client.domain.plan import Plan
+from subgate_client.domain.usage import UsageRate
+from subgate_client.utils import get_current_datetime
 from tests.conftest import client, wrapper, plans
 
 

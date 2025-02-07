@@ -2,7 +2,7 @@ from typing import cast
 
 import pytest
 
-from subgate.client.exceptions import MultipleError, ValidationError
+from subgate_client.client.exceptions import MultipleError, ValidationError
 from tests.conftest import fake_plan, client, wrapper
 
 
