@@ -85,14 +85,16 @@ class StringValidator(Validator):
 class IntegerValidator(BoundaryValidator):
     def validate(self) -> Self:
         self.validate_type(int)
-        self.validate_boundaries()
+        if not self.errors:
+            self.validate_boundaries()
         return self
 
 
 class NumberValidator(BoundaryValidator):
     def validate(self) -> Self:
         self.validate_type((int, float))
-        self.validate_boundaries()
+        if not self.errors:
+            self.validate_boundaries()
         return self
 
 
@@ -105,7 +107,8 @@ class BooleanValidator(Validator):
 class AwareDatetimeValidator(BoundaryValidator):
     def validate(self) -> Self:
         self.validate_type(datetime.datetime)
-        self.validate_boundaries()
+        if not self.errors:
+            self.validate_boundaries()
         return self
 
 
@@ -285,7 +288,7 @@ class DiscountValidator(Validator):
                 StringValidator(self.value.description, f"{self.field_name}.description",
                                 True).validate().parse_errors() +
                 NumberValidator(self.value.size, f"{self.field_name}.size", ge=0, lt=1).validate().parse_errors() +
-                AwareDatetimeValidator(self.value.valid_unit,
+                AwareDatetimeValidator(self.value.valid_until,
                                        f"{self.field_name}.valid_until").validate().parse_errors()
 
             )
