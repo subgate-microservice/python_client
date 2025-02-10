@@ -10,7 +10,8 @@ from subgatekit.v2_0.domain.discount import Discount
 from subgatekit.v2_0.domain.enums import SubscriptionStatus
 from subgatekit.v2_0.domain.plan import ID, PlanInfo, Plan
 from subgatekit.v2_0.domain.usage import Usage
-from subgatekit.v2_0.domain.validators import (TypeValidator, ListValidator, FieldsValidator, raise_errors_if_necessary)
+from subgatekit.v2_0.domain.validators import (TypeValidator, FieldsValidator, raise_errors_if_necessary,
+                                               ListTypeValidator)
 
 
 class Subscription:
@@ -151,12 +152,8 @@ class Subscription:
             *TypeValidator("Subscription.subscriber_id", subscriber_id, str).validate().parse_errors(),
             *TypeValidator("Subscription.billing_info", billing_info, BillingInfo).validate().parse_errors(),
             *TypeValidator("Subscription.plan_info", plan_info, PlanInfo).validate().parse_errors(),
-            *ListValidator(
-                "Subscription.usages", usages, TypeValidator, {"expected_type": Usage}, True,
-            ).validate().parse_errors(),
-            *ListValidator(
-                "Subscription.discounts", discounts, TypeValidator, {"expected_type": Discount}, True,
-            ).validate().parse_errors(),
+            *ListTypeValidator("Subscription.usages", usages, Usage, True).validate().parse_errors(),
+            *ListTypeValidator("Subscription.discounts", discounts, Discount, True).validate().parse_errors(),
             *TypeValidator("Subscription.autorenew", autorenew, bool).validate().parse_errors(),
             *FieldsValidator("Subscription.fields", fields, True).validate().parse_errors(),
         ]

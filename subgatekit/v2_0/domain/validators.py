@@ -40,36 +40,6 @@ class Validator(ABC):
         return result
 
 
-class ListValidator(Validator):
-    def __init__(
-            self,
-            field: str,
-            value: Any,
-            item_validator: Type[Validator],
-            validator_kwargs: dict = None,
-            optional=False,
-    ):
-        super().__init__(field, value)
-        self._item_validator_type = item_validator
-        self._kwargs = validator_kwargs if validator_kwargs else {}
-        self._optional = optional
-
-    def validate(self) -> Self:
-        if self._optional and self._value is None:
-            return self
-
-        if not isinstance(self._value, list):
-            self._errors.append(
-                ValidationError(self._field, "Must be a list", self._value)
-            )
-        else:
-            for i, item in enumerate(self._value):
-                validator = self._item_validator_type(f"{self._field}[{i}]", item, **self._kwargs)
-                validator.validate()
-                self._errors.extend(validator.parse_errors())
-        return self
-
-
 class TypeValidator(Validator):
     def __init__(
             self,
@@ -89,6 +59,25 @@ class TypeValidator(Validator):
             self._errors.append(
                 ValidationError(self._field, f"Must be of type {self._expected_type}", self._value)
             )
+        return self
+
+
+class ListTypeValidator(TypeValidator):
+    def validate(self) -> Self:
+        if self._optional and self._value is None:
+            return self
+
+        if not isinstance(self._value, list):
+            self._errors.append(
+                ValidationError(self._field, "Must be a list", self._value)
+            )
+            return self
+
+        for i, value in enumerate(self._value):
+            if not isinstance(value, self._expected_type):
+                self._errors.append(
+                    ValidationError(f"{self._field}[{i}]", f"Must be of type {self._expected_type}", value)
+                )
         return self
 
 

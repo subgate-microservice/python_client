@@ -42,6 +42,13 @@ class TestSubscriptionValidators:
             Subscription(123, billing_info, plan_info)
         print(err.value)
 
+    def test_bar(self):
+        with pytest.raises(ValidationError) as err:
+            billing_info = BillingInfo(100, "USD", Period.Monthly)
+            plan_info = PlanInfo.from_plan(fake_plan())
+            Subscription("AnyId", billing_info, plan_info, usages=["WrongType"])
+        print(err.value)
+
 
 class TestPlanValidators:
     def test_plan_with_fields_that_not_json_serializable(self):
