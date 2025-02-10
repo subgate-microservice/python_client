@@ -20,15 +20,14 @@ class Subscription:
             billing_info: BillingInfo,
             plan_info: PlanInfo,
             status: SubscriptionStatus = SubscriptionStatus.Active,
+            paused_from: Optional[datetime] = None,
             usages: list[Usage] = None,
             discounts: list[Discount] = None,
             autorenew: bool = False,
-            created_at: datetime = None,
-            updated_at: datetime = None,
-            paused_from: Optional[datetime] = None,
-
             fields: dict = None,
             id: ID = None,
+            created_at: datetime = None,
+            updated_at: datetime = None,
     ):
         self._status = status
         self._paused_from = paused_from
