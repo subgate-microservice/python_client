@@ -44,29 +44,6 @@ class Subscription:
         self.fields = fields if fields else {}
 
     @classmethod
-    def _create_internal(
-            cls,
-            subscriber_id: str,
-            billing_info: BillingInfo,
-            plan_info: PlanInfo,
-            status: SubscriptionStatus,
-            paused_from: Optional[datetime],
-            usages: list[Usage],
-            discounts: list[Discount],
-            autorenew: bool,
-            fields: dict,
-            created_at: datetime,
-            updated_at: datetime,
-            id: ID,
-    ):
-        instance = cls(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields, id)
-        object.__setattr__(instance, "_status", status)
-        object.__setattr__(instance, "_paused_from", paused_from)
-        object.__setattr__(instance, "_created_at", created_at)
-        object.__setattr__(instance, "_updated_at", updated_at)
-        return instance
-
-    @classmethod
     def from_plan(cls, plan: Plan, subscriber_id: str) -> Self:
         billing_info = BillingInfo.from_plan(plan)
         plan_info = PlanInfo.from_plan(plan)
@@ -102,7 +79,7 @@ class Subscription:
 
     def add_discount(self, discount: Discount) -> None:
         if self._discounts.get(discount.code) is not None:
-            raise ItemAlreadyExist(Discount.__class__.__name__, discount.code, "code")
+            raise ItemAlreadyExist(discount.__class__.__name__, discount.code, "code")
         self._discounts[discount.code] = discount
 
     def remove_discount(self, code: str) -> None:
@@ -161,3 +138,25 @@ class Subscription:
         for validator in validators:
             errors.extend(validator.validate().parse_errors())
         raise_errors_if_necessary(errors)
+
+
+def create_subscription_with_internal_fields(
+        subscriber_id: str,
+        billing_info: BillingInfo,
+        plan_info: PlanInfo,
+        status: SubscriptionStatus,
+        paused_from: Optional[datetime],
+        usages: list[Usage],
+        discounts: list[Discount],
+        autorenew: bool,
+        fields: dict,
+        created_at: datetime,
+        updated_at: datetime,
+        id: ID,
+) -> Subscription:
+    instance = Subscription(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields, id)
+    object.__setattr__(instance, "_status", status)
+    object.__setattr__(instance, "_paused_from", paused_from)
+    object.__setattr__(instance, "_created_at", created_at)
+    object.__setattr__(instance, "_updated_at", updated_at)
+    return instance

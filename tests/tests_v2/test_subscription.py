@@ -20,4 +20,3 @@ def test_usage_management():
         Discount("Black friday", "black", 0.2, get_current_datetime(), "")
     )
 
-
