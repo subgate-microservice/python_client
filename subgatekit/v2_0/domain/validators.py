@@ -2,6 +2,8 @@ import json
 from abc import ABC, abstractmethod
 from typing import Any, Self, Type, Union
 
+from subgatekit.client.exceptions import MultipleError
+
 
 class ValidationError(Exception):
     def __init__(self, field: str, message: str, value: Any):
@@ -44,13 +46,18 @@ class ListValidator(Validator):
             field: str,
             value: Any,
             item_validator: Type[Validator],
-            **kwargs,
+            validator_kwargs: dict = None,
+            optional=False,
     ):
         super().__init__(field, value)
         self._item_validator_type = item_validator
-        self._kwargs = kwargs
+        self._kwargs = validator_kwargs if validator_kwargs else {}
+        self._optional = optional
 
     def validate(self) -> Self:
+        if self._optional and self._value is None:
+            return self
+
         if not isinstance(self._value, list):
             self._errors.append(
                 ValidationError(self._field, "Must be a list", self._value)
@@ -77,15 +84,23 @@ class TypeValidator(Validator):
 
     def validate(self) -> Self:
         if self._optional and self._value is None:
-            return
+            return self
         if not isinstance(self._value, self._expected_type):
             self._errors.append(
                 ValidationError(self._field, f"Must be of type {self._expected_type}", self._value)
             )
+        return self
 
 
 class FieldsValidator(Validator):
+    def __init__(self, field: str, value: Any, optional=False, **kwargs):
+        super().__init__(field, value, **kwargs)
+        self._optional = optional
+
     def validate(self) -> Self:
+        if self._optional and self._value is None:
+            return self
+
         if not isinstance(self._value, dict):
             self._errors.append(
                 ValidationError(self._field, f"Must be of type {dict}", self._value)
@@ -101,3 +116,11 @@ class FieldsValidator(Validator):
                 )
             )
         return self
+
+
+def raise_errors_if_necessary(errors: list[ValidationError]) -> None:
+    if errors:
+        if len(errors) == 1:
+            raise errors[0]
+        else:
+            raise MultipleError(errors)

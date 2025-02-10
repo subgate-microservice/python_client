@@ -12,12 +12,12 @@ class BillingInfo:
             price: Number,
             currency: str,
             billing_cycle: Period,
-            last_billing: datetime,
+            last_billing: datetime = None,
     ):
         self.billing_cycle = billing_cycle
-        self.last_billing = last_billing
-        self.price = price
         self.currency = currency
+        self.price = price
+        self.last_billing = last_billing if last_billing else get_current_datetime()
 
     @classmethod
     def from_plan(cls, plan: Plan) -> Self:

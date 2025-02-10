@@ -10,7 +10,7 @@ from subgatekit.v2_0.domain.discount import Discount
 from subgatekit.v2_0.domain.enums import SubscriptionStatus
 from subgatekit.v2_0.domain.plan import ID, PlanInfo, Plan
 from subgatekit.v2_0.domain.usage import Usage
-from subgatekit.v2_0.domain.validators import TypeValidator, ListValidator, FieldsValidator
+from subgatekit.v2_0.domain.validators import (TypeValidator, ListValidator, FieldsValidator, raise_errors_if_necessary)
 
 
 class Subscription:
@@ -24,8 +24,10 @@ class Subscription:
             discounts: list[Discount] = None,
             autorenew: bool = False,
             fields: dict = None,
-            id: ID = None
+            id: ID = None,
     ):
+        self._validate(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields, id)
+
         self._status = SubscriptionStatus.Active
         self._paused_from = None
         self._created_at = get_current_datetime()
@@ -57,8 +59,8 @@ class Subscription:
             id: ID,
     ):
         instance = cls(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields, id)
-        object.__setattr__(instance, "status", status)
-        object.__setattr__(instance, "paused_from", paused_from)
+        object.__setattr__(instance, "_status", status)
+        object.__setattr__(instance, "_paused_from", paused_from)
         object.__setattr__(instance, "_created_at", created_at)
         object.__setattr__(instance, "_updated_at", updated_at)
         return instance
@@ -133,20 +135,29 @@ class Subscription:
     def expire(self) -> None:
         self._status = SubscriptionStatus.Expired
 
-    def _validate(self) -> None:
+    @staticmethod
+    def _validate(
+            subscriber_id: str,
+            billing_info: BillingInfo,
+            plan_info: PlanInfo,
+            usages: list[Usage] = None,
+            discounts: list[Discount] = None,
+            autorenew: bool = False,
+            fields: dict = None,
+            id: ID = None,
+    ) -> None:
         errors = [
-            *TypeValidator("Subscription.id", self.id, ID).validate().parse_errors(),
-            *TypeValidator("Subscription.subscriber_id", self.subscriber_id, str).validate().parse_errors(),
-            *TypeValidator("Subscription.billing_info", self.billing_info, BillingInfo).validate().parse_errors(),
-            *TypeValidator("Subscription.plan_info", self.plan_info, PlanInfo).validate().parse_errors(),
+            *TypeValidator("Subscription.id", id, ID, True).validate().parse_errors(),
+            *TypeValidator("Subscription.subscriber_id", subscriber_id, str).validate().parse_errors(),
+            *TypeValidator("Subscription.billing_info", billing_info, BillingInfo).validate().parse_errors(),
+            *TypeValidator("Subscription.plan_info", plan_info, PlanInfo).validate().parse_errors(),
             *ListValidator(
-                "Subscription.usages", self._usages, TypeValidator, expected_type=Usage
+                "Subscription.usages", usages, TypeValidator, {"expected_type": Usage}, True,
             ).validate().parse_errors(),
             *ListValidator(
-                "Subscription.discounts", self._discounts, TypeValidator, expected_type=Discount,
+                "Subscription.discounts", discounts, TypeValidator, {"expected_type": Discount}, True,
             ).validate().parse_errors(),
-            *TypeValidator("Subscription.autorenew", self.autorenew, bool).validate().parse_errors(),
-            *FieldsValidator("Subscription.fields", self.fields).validate().parse_errors(),
+            *TypeValidator("Subscription.autorenew", autorenew, bool).validate().parse_errors(),
+            *FieldsValidator("Subscription.fields", fields, True).validate().parse_errors(),
         ]
-        if errors:
-            raise NotImplemented
+        raise_errors_if_necessary(errors)
