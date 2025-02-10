@@ -1,16 +1,12 @@
-from subgatekit.domain.enums import Period
+from typing import NamedTuple
+
+from subgatekit.v2_0.domain.enums import Period
 
 
-class Cycle:
-    def __init__(
-            self,
-            title: str,
-            code: Period,
-            cycle_in_days: int,
-    ):
-        self.title = title
-        self.code = code
-        self.cycle_in_days = cycle_in_days
+class Cycle(NamedTuple):
+    title: str
+    code: Period
+    cycle_in_days: int
 
     @classmethod
     def from_code(cls, code: Period):

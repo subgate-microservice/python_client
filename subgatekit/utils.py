@@ -1,5 +1,6 @@
 import datetime
 from functools import wraps
+from typing import Union
 
 
 def get_current_datetime():
@@ -21,3 +22,6 @@ def docstring(doc: str):
         return wrapper
 
     return decorator
+
+
+Number = Union[int, float]

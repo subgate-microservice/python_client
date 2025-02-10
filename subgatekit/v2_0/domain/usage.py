@@ -44,6 +44,9 @@ class Usage(UsageRate):
             renew_cycle=usage_rate.renew_cycle.code,
         )
 
+    def to_usage_rate(self) -> UsageRate:
+        return UsageRate(self.title, self.code, self.unit, self.available_units, self.renew_cycle.code)
+
 
 class UsageForm:
     def __init__(self, code: str, value: float):

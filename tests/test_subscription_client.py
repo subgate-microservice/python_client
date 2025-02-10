@@ -258,7 +258,7 @@ class TestUsages:
         usages = [Usage("AnyTitle", "first", "Request", 100_000, 0, Period.Monthly)]
         sub = await wrapper(client.subscription_client().create_subscription("AnyId", fake_plan, usages=usages))
 
-        await wrapper(client.subscription_client().adjust_usage(sub.id, "first", 100))
+        await wrapper(client.subscription_client().increase_usage(sub.id, "first", 100))
 
         updated = await wrapper(client.subscription_client().get_subscription_by_id(sub.id))
         assert math.isclose(
@@ -271,7 +271,7 @@ class TestUsages:
         usages = [Usage("AnyTitle", "first", "Request", 100_000, 900, Period.Monthly)]
         sub = await wrapper(client.subscription_client().create_subscription("AnyId", fake_plan, usages=usages))
 
-        await wrapper(client.subscription_client().adjust_usage(sub.id, "first", -100))
+        await wrapper(client.subscription_client().increase_usage(sub.id, "first", -100))
 
         updated = await wrapper(client.subscription_client().get_subscription_by_id(sub.id))
         assert math.isclose(
@@ -284,7 +284,7 @@ class TestUsages:
         usages = [Usage("AnyTitle", "first", "Request", 100_000, 900, Period.Monthly)]
         sub = await wrapper(client.subscription_client().create_subscription("AnyId", fake_plan, usages=usages))
         with pytest.raises(Exception):
-            await wrapper(client.subscription_client().adjust_usage(sub.id, "AnyWrongResource", -100))
+            await wrapper(client.subscription_client().increase_usage(sub.id, "AnyWrongResource", -100))
 
     @pytest.mark.asyncio
     async def test_add_usages(self, fake_plan, client):
@@ -395,7 +395,7 @@ class TestErrors:
 
         # Test
         with pytest.raises(ItemNotExist) as err:
-            await wrapper(client.subscription_client().adjust_usage(sub.id, "code_that_not_exist", 100))
+            await wrapper(client.subscription_client().increase_usage(sub.id, "code_that_not_exist", 100))
         assert err.value.item_type == "Usage"
         assert err.value.lookup_field_value == "code_that_not_exist"
         assert err.value.lookup_field_key == "code"
@@ -412,7 +412,7 @@ class TestErrors:
         # Test
         with pytest.raises(ItemNotExist) as err:
             sub_id = uuid4()
-            await wrapper(client.subscription_client().adjust_usage(sub_id, "any_code", 100))
+            await wrapper(client.subscription_client().increase_usage(sub_id, "any_code", 100))
         assert err.value.lookup_field_value == str(sub_id)
         assert err.value.item_type == "Subscription"
         assert err.value.lookup_field_key == "id"

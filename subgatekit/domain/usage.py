@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Self, Union
 
 from subgatekit.domain.cycle import Cycle
 from subgatekit.domain.enums import Period
@@ -47,6 +47,9 @@ class Usage:
             used_units=0,
             renew_cycle=usage_rate.renew_cycle.code,
         )
+
+    def change_used_units(self, delta: Union[int, float]):
+        self.used_units = self.used_units + delta
 
 
 class UsageForm:
