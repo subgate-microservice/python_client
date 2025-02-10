@@ -70,8 +70,8 @@ class Subscription:
     def from_plan(cls, plan: Plan, subscriber_id: str) -> Self:
         billing_info = BillingInfo.from_plan(plan)
         plan_info = PlanInfo.from_plan(plan)
-        usages = [Usage.from_usage_rate(rate) for rate in plan.usage_rates]
-        discounts = [copy(dis) for dis in plan.discounts]
+        usages = [Usage.from_usage_rate(rate) for rate in plan.get_usage_rates()]
+        discounts = [copy(dis) for dis in plan.get_discounts()]
         return cls(subscriber_id, billing_info, plan_info, usages=usages, discounts=discounts)
 
     @property
@@ -98,7 +98,7 @@ class Subscription:
         return list(self._usages.values())
 
     def increase_usage(self, code: str, delta: Number) -> None:
-        self._usages[code] += delta
+        self._usages[code].used_units += delta
 
     def add_discount(self, discount: Discount) -> None:
         if self._discounts.get(discount.code) is not None:
