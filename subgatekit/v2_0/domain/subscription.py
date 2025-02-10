@@ -25,24 +25,44 @@ class Subscription:
             discounts: list[Discount] = None,
             autorenew: bool = False,
             fields: dict = None,
-            id: ID = None,
-            created_at: datetime = None,
-            updated_at: datetime = None,
+            id: ID = None
     ):
         self._status = status
         self._paused_from = paused_from
-        self._created_at = created_at if created_at else get_current_datetime()
-        self._updated_at = updated_at if updated_at else self._created_at
+        self._created_at = get_current_datetime()
+        self._updated_at = self._created_at
+        self.id = id if id else uuid4()
 
         self._usages = {x.code: x for x in usages} if usages else {}
         self._discounts = {x.code: x for x in discounts} if discounts else {}
 
-        self.id = id if id else uuid4()
         self.billing_info = billing_info
         self.plan_info = plan_info
         self.autorenew = autorenew
         self.subscriber_id = subscriber_id
         self.fields = fields if fields else {}
+
+    @classmethod
+    def _create_internal(
+            cls,
+            subscriber_id: str,
+            billing_info: BillingInfo,
+            plan_info: PlanInfo,
+            status: SubscriptionStatus,
+            paused_from: Optional[datetime],
+            usages: list[Usage],
+            discounts: list[Discount],
+            autorenew: bool,
+            fields: dict,
+            created_at: datetime,
+            updated_at: datetime,
+            id: ID,
+    ):
+        instance = cls(subscriber_id, billing_info, plan_info, status, paused_from, usages, discounts, autorenew,
+                       fields, id)
+        object.__setattr__(instance, "_created_at", created_at)
+        object.__setattr__(instance, "_updated_at", updated_at)
+        return instance
 
     @classmethod
     def from_plan(cls, plan: Plan, subscriber_id: str) -> Self:
