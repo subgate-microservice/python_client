@@ -147,14 +147,17 @@ class Subscription:
             fields: dict = None,
             id: ID = None,
     ) -> None:
-        errors = [
-            *TypeValidator("Subscription.id", id, ID, True).validate().parse_errors(),
-            *TypeValidator("Subscription.subscriber_id", subscriber_id, str).validate().parse_errors(),
-            *TypeValidator("Subscription.billing_info", billing_info, BillingInfo).validate().parse_errors(),
-            *TypeValidator("Subscription.plan_info", plan_info, PlanInfo).validate().parse_errors(),
-            *ListTypeValidator("Subscription.usages", usages, Usage, True).validate().parse_errors(),
-            *ListTypeValidator("Subscription.discounts", discounts, Discount, True).validate().parse_errors(),
-            *TypeValidator("Subscription.autorenew", autorenew, bool).validate().parse_errors(),
-            *FieldsValidator("Subscription.fields", fields, True).validate().parse_errors(),
+        validators = [
+            TypeValidator("Subscription.id", id, ID, True),
+            TypeValidator("Subscription.subscriber_id", subscriber_id, str),
+            TypeValidator("Subscription.billing_info", billing_info, BillingInfo),
+            TypeValidator("Subscription.plan_info", plan_info, PlanInfo),
+            ListTypeValidator("Subscription.usages", usages, Usage, True),
+            ListTypeValidator("Subscription.discounts", discounts, Discount, True),
+            TypeValidator("Subscription.autorenew", autorenew, bool),
+            FieldsValidator("Subscription.fields", fields, True),
         ]
+        errors = []
+        for validator in validators:
+            errors.extend(validator.validate().parse_errors())
         raise_errors_if_necessary(errors)
