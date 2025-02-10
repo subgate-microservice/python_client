@@ -19,23 +19,21 @@ class Subscription:
             subscriber_id: str,
             billing_info: BillingInfo,
             plan_info: PlanInfo,
-            status: SubscriptionStatus = SubscriptionStatus.Active,
-            paused_from: Optional[datetime] = None,
             usages: list[Usage] = None,
             discounts: list[Discount] = None,
             autorenew: bool = False,
             fields: dict = None,
             id: ID = None
     ):
-        self._status = status
-        self._paused_from = paused_from
+        self._status = SubscriptionStatus.Active
+        self._paused_from = None
         self._created_at = get_current_datetime()
         self._updated_at = self._created_at
-        self.id = id if id else uuid4()
 
         self._usages = {x.code: x for x in usages} if usages else {}
         self._discounts = {x.code: x for x in discounts} if discounts else {}
 
+        self.id = id if id else uuid4()
         self.billing_info = billing_info
         self.plan_info = plan_info
         self.autorenew = autorenew
@@ -58,8 +56,9 @@ class Subscription:
             updated_at: datetime,
             id: ID,
     ):
-        instance = cls(subscriber_id, billing_info, plan_info, status, paused_from, usages, discounts, autorenew,
-                       fields, id)
+        instance = cls(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields, id)
+        object.__setattr__(instance, "status", status)
+        object.__setattr__(instance, "paused_from", paused_from)
         object.__setattr__(instance, "_created_at", created_at)
         object.__setattr__(instance, "_updated_at", updated_at)
         return instance
@@ -125,8 +124,11 @@ class Subscription:
         self._status = SubscriptionStatus.Active
         self._paused_from = None
 
-    def renew(self, from_date: datetime = None):
+    def renew(self, from_date: datetime = None) -> None:
         if not from_date:
             from_date = get_current_datetime()
         self.billing_info.last_billing = from_date
         self._status = SubscriptionStatus.Active
+
+    def expire(self) -> None:
+        self._status = SubscriptionStatus.Expired
