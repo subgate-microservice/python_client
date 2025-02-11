@@ -96,6 +96,14 @@ class TestUpdateSubscription:
 
         yield sub1, sub2
 
+    @pytest.fixture()
+    def subscription_with_usages(self, sync_client):
+        plan = Plan("Business", 100, "USD", Period.Monthly)
+        plan.usage_rates.add(UsageRate("ApiCall", "api_call", "request", 100, Period.Monthly))
+        sub = Subscription.from_plan(plan, "AnyId")
+        sync_client.subscription_client().create(sub)
+        yield sub
+
     @pytest.mark.asyncio
     async def test_pause_subscription(self, client, simple_subscription):
         # Update
@@ -156,3 +164,13 @@ class TestUpdateSubscription:
         # Check
         real: Subscription = await wrapper(client.subscription_client().get_by_id(simple_subscription.id))
         assert real.status == SubscriptionStatus.Expired
+
+    @pytest.mark.asyncio
+    async def test_increase_usage(self, client, subscription_with_usages):
+        # Update
+        subscription_with_usages.usages.get("api_call").increase(45)
+        await wrapper(client.subscription_client().update(subscription_with_usages))
+
+        # Check
+        real: Subscription = await wrapper(client.subscription_client().get_by_id(subscription_with_usages.id))
+        assert real.usages.get("api_call").used_units == 45
