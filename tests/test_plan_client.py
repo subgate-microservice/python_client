@@ -2,7 +2,7 @@ from datetime import timedelta
 
 import pytest
 
-from subgatekit.client.exceptions import ItemAlreadyExist, ValidationError
+from subgatekit.v2_0.domain.exceptions import ItemAlreadyExist, ValidationError
 from subgatekit.domain.enums import Period
 from subgatekit.domain.discount import Discount
 from subgatekit.domain.plan import Plan

@@ -5,7 +5,7 @@ from uuid import uuid4
 
 import pytest
 
-from subgatekit.client.exceptions import ItemNotExist, MultipleError, ValidationError, ItemAlreadyExist
+from subgatekit.v2_0.domain.exceptions import ItemNotExist, MultipleError, ValidationError, ItemAlreadyExist
 from subgatekit.domain.enums import Period, SubscriptionStatus
 from subgatekit.domain.subscription import Subscription
 from subgatekit.domain.usage import Usage, UsageRate

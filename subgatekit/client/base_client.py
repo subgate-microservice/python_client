@@ -4,7 +4,7 @@ from typing import Optional, Iterable, Literal
 
 import httpx
 
-from subgatekit.client.exceptions import ItemNotExist, ItemAlreadyExist
+from subgatekit.v2_0.domain.exceptions import ItemNotExist, ItemAlreadyExist
 from subgatekit.domain.enums import SubscriptionStatus
 from subgatekit.domain.plan import ID
 

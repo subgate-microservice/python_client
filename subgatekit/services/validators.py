@@ -5,7 +5,7 @@ from enum import StrEnum
 from types import NoneType
 from typing import Any, Type, Union, Iterable, Optional
 
-from subgatekit.client.exceptions import ValidationError, MultipleError
+from subgatekit.v2_0.domain.exceptions import ValidationError, MultipleError
 from subgatekit.domain.cycle import Cycle
 from subgatekit.domain.enums import Period, SubscriptionStatus
 from subgatekit.domain.discount import Discount

@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from subgatekit.client.exceptions import ValidationError, MultipleError
+from subgatekit.v2_0.domain.exceptions import ValidationError, MultipleError
 from subgatekit.domain.cycle import Cycle
 from subgatekit.domain.discount import Discount
 from subgatekit.domain.enums import Period, SubscriptionStatus
