@@ -19,15 +19,15 @@ class ItemManager[T]:
             raise ValueError(f"Item with hash value '{key}' already exist")
         self._items[key] = item
 
+    def get_all(self) -> list[T]:
+        return list(self._items.values())
+
     def get(self, code: str) -> T:
         return self._items[code]
-
-    def remove(self, code: str) -> None:
-        self._items.pop(code, None)
 
     def update(self, code: str, item: T) -> None:
         self.get(code)
         self._items[code] = item
 
-    def get_all(self) -> list[T]:
-        return list(self._items.values())
+    def remove(self, code: str) -> None:
+        self._items.pop(code, None)
