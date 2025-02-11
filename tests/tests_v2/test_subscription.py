@@ -1,7 +1,7 @@
 import pytest
 
 from subgatekit.v2_0.domain.entities import Plan, Subscription, UsageRate, Discount
-from subgatekit.v2_0.domain.enums import Period
+from subgatekit.v2_0.domain.enums import Period, SubscriptionStatus
 from subgatekit.v2_0.domain.utils import get_current_datetime
 from tests.tests_v2.conftest import client, wrapper
 
@@ -61,3 +61,33 @@ class TestGetSubscription:
         real: Subscription = await wrapper(client.subscription_client().get_by_id(sub.id))
         assert real.id == sub.id
         assert real.fields == {"Hello": "World!"}
+
+
+class TestUpdateSubscription:
+    @pytest.mark.asyncio
+    async def test_pause_subscription(self, client):
+        # Before
+        plan = Plan("Business", 100, "USD", Period.Monthly)
+        sub = Subscription.from_plan(plan, "AnyID", )
+        sub: Subscription = await wrapper(client.subscription_client().create_then_get(sub))
+        assert sub.status == SubscriptionStatus.Active
+
+    @pytest.mark.asyncio
+    async def test_resume_subscription(self, client):
+        raise NotImplemented
+
+    @pytest.mark.asyncio
+    async def test_renew_subscription(self, client):
+        raise NotImplemented
+
+    @pytest.mark.asyncio
+    async def test_resume_subscription_with_active_status_conflict(self, client):
+        raise NotImplemented
+
+    @pytest.mark.asyncio
+    async def test_renew_subscription_with_active_status_conflict(self, client):
+        raise NotImplemented
+
+    @pytest.mark.asyncio
+    async def test_expire_subscription(self, client):
+        raise NotImplemented

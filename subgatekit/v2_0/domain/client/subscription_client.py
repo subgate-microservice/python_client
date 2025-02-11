@@ -16,6 +16,10 @@ class SyncSubscriptionClient:
         data = serialize_subscription(sub)
         self._base_client.request("POST", url, json=data)
 
+    def create_then_get(self, sub: Subscription) -> Subscription:
+        self.create(sub)
+        return self.get_by_id(sub.id)
+
     def update(self, sub: Subscription) -> None:
         url = f"/subscription/{sub.id}"
         data = serialize_subscription(sub)
