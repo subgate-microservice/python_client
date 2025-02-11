@@ -22,6 +22,10 @@ def processing_response(response: httpx.Response):
             raise Exception(data)
         raise ItemAlreadyExist.from_json(data)
 
+    if response.status_code == 422:
+        logger.error(response.json())
+        raise Exception("HttpStatusCode422")
+
     if response.status_code >= 400:
         response.raise_for_status()
 

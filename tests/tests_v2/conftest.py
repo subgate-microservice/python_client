@@ -35,6 +35,14 @@ async def client(request) -> SubgateClient:
     yield request.param
 
 
+sclient = SubgateClient(CLIENT_BASE_URL, CLIENT_APIKEY_VALUE)
+
+
+@pytest.fixture()
+def sync_client():
+    yield sclient
+
+
 async def wrapper[T](result_or_coro: Awaitable[T]) -> T:
     if isinstance(result_or_coro, Coroutine):
         return await result_or_coro
