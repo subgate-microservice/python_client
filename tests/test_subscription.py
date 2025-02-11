@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 
 from subgatekit.v2_0.domain.entities import Plan, Subscription, UsageRate, Discount
@@ -83,11 +85,39 @@ class TestUpdateSubscription:
 
     @pytest.mark.asyncio
     async def test_resume_subscription(self, client):
-        raise NotImplemented
+        # Before
+        plan = Plan("Business", 100, "USD", Period.Monthly)
+        sub = Subscription.from_plan(plan, "AnyID", )
+        sub.pause()
+        sub: Subscription = await wrapper(client.subscription_client().create_then_get(sub))
+        assert sub.status == SubscriptionStatus.Paused
+
+        # Update
+        sub.resume()
+        await wrapper(client.subscription_client().update(sub))
+
+        # Check
+        real: Subscription = await wrapper(client.subscription_client().get_by_id(sub.id))
+        assert real.status == SubscriptionStatus.Active
+        assert real.paused_from is None
 
     @pytest.mark.asyncio
     async def test_renew_subscription(self, client):
-        raise NotImplemented
+        # Before
+        last_bill = get_current_datetime() - timedelta(2)
+        plan = Plan("Business", 100, "USD", Period.Monthly)
+        sub = Subscription.from_plan(plan, "AnyID", )
+        sub.billing_info.last_billing = last_bill
+        sub: Subscription = await wrapper(client.subscription_client().create_then_get(sub))
+        assert sub.billing_info.last_billing == last_bill
+
+        # Update
+        sub.renew()
+        await wrapper(client.subscription_client().update(sub))
+
+        # Check
+        real: Subscription = await wrapper(client.subscription_client().get_by_id(sub.id))
+        assert real.billing_info.last_billing.date() == get_current_datetime().date()
 
     @pytest.mark.asyncio
     async def test_resume_subscription_with_active_status_conflict(self, client):
