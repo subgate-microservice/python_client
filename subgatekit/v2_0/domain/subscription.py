@@ -3,11 +3,11 @@ from datetime import datetime
 from typing import Optional, Self
 from uuid import uuid4
 
-from subgatekit.client.exceptions import ItemAlreadyExist
-from subgatekit.utils import get_current_datetime, Number
+from subgatekit.utils import get_current_datetime
 from subgatekit.v2_0.domain.billing_info import BillingInfo
 from subgatekit.v2_0.domain.discount import Discount
 from subgatekit.v2_0.domain.enums import SubscriptionStatus
+from subgatekit.v2_0.domain.item_manager import ItemManager
 from subgatekit.v2_0.domain.plan import ID, PlanInfo, Plan
 from subgatekit.v2_0.domain.usage import Usage
 from subgatekit.v2_0.domain.validators import (TypeValidator, FieldsValidator, raise_errors_if_necessary,
@@ -33,8 +33,8 @@ class Subscription:
         self._paused_from = None
         self._created_at = get_current_datetime()
         self._updated_at = self._created_at
-        self._usages = {x.code: x for x in usages} if usages else {}
-        self._discounts = {x.code: x for x in discounts} if discounts else {}
+        self._usages: ItemManager[Usage] = ItemManager(usages, lambda x: x.code)
+        self._discounts: ItemManager[Discount] = ItemManager(discounts, lambda x: x.code)
 
         self.id = id if id else uuid4()
         self.billing_info = billing_info
@@ -47,9 +47,13 @@ class Subscription:
     def from_plan(cls, plan: Plan, subscriber_id: str) -> Self:
         billing_info = BillingInfo.from_plan(plan)
         plan_info = PlanInfo.from_plan(plan)
-        usages = [Usage.from_usage_rate(rate) for rate in plan.get_usage_rates()]
-        discounts = [copy(dis) for dis in plan.get_discounts()]
+        usages = [Usage.from_usage_rate(rate) for rate in plan.usage_rates]
+        discounts = [copy(dis) for dis in plan.discounts]
         return cls(subscriber_id, billing_info, plan_info, usages=usages, discounts=discounts)
+
+    @property
+    def status(self) -> SubscriptionStatus:
+        return self._status
 
     @property
     def paused_from(self) -> Optional[datetime]:
@@ -63,30 +67,13 @@ class Subscription:
     def updated_at(self) -> datetime:
         return self._updated_at
 
-    def add_usage(self, usage: Usage) -> None:
-        if self._usages.get(usage.code) is not None:
-            raise ItemAlreadyExist(Usage.__class__.__name__, usage.code, "code")
-        self._usages[usage.code] = usage
+    @property
+    def discounts(self) -> ItemManager[Discount]:
+        return self._discounts
 
-    def remove_usage(self, code: str) -> None:
-        self._usages.pop(code, None)
-
-    def get_usages(self) -> list[Usage]:
-        return list(self._usages.values())
-
-    def increase_usage(self, code: str, delta: Number) -> None:
-        self._usages[code].used_units += delta
-
-    def add_discount(self, discount: Discount) -> None:
-        if self._discounts.get(discount.code) is not None:
-            raise ItemAlreadyExist(discount.__class__.__name__, discount.code, "code")
-        self._discounts[discount.code] = discount
-
-    def remove_discount(self, code: str) -> None:
-        self._discounts.pop(code, None)
-
-    def get_discounts(self) -> list[Discount]:
-        return list(self._discounts.values())
+    @property
+    def usages(self) -> ItemManager[Usage]:
+        return self._usages
 
     def pause(self) -> None:
         if self._status == SubscriptionStatus.Paused:

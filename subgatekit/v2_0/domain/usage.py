@@ -47,3 +47,6 @@ class Usage(UsageRate):
             used_units=0,
             renew_cycle=usage_rate.renew_cycle.code,
         )
+
+    def increase(self, delta: float) -> None:
+        self.used_units += delta

@@ -2,7 +2,6 @@ import datetime
 from typing import Any, Optional, Self
 from uuid import UUID, uuid4
 
-from subgatekit.client.exceptions import ItemAlreadyExist
 from subgatekit.utils import get_current_datetime
 from subgatekit.v2_0.domain.discount import Discount
 from subgatekit.v2_0.domain.enums import Period
@@ -72,28 +71,13 @@ class Plan:
     def updated_at(self):
         return self._updated_at
 
-    def get_usage_rates(self) -> list[UsageRate]:
-        return list(self._usage_rates.values())
+    @property
+    def usage_rates(self):
+        return self._usage_rates
 
-    def add_usage_rate(self, usage_rate: UsageRate) -> None:
-        if self._usage_rates.get(usage_rate.code):
-            raise ItemAlreadyExist(usage_rate.__class__.__name__, usage_rate.code, "code")
-        self._usage_rates[usage_rate.code] = usage_rate
-
-    def remove_usage_rate(self, code: str) -> None:
-        self._usage_rates.pop(code, None)
-
-    def get_discounts(self) -> list[Discount]:
-        return list(self._discounts.values())
-
-    def add_discount(self, discount: Discount) -> None:
-        code = discount.code
-        if self._discounts.get(code):
-            raise ItemAlreadyExist(discount.__class__.__name__, code, "code")
-        self._discounts[code] = discount
-
-    def remove_discount(self, code: str) -> None:
-        self._discounts.pop(code, None)
+    @property
+    def discounts(self):
+        return self._discounts
 
 
 class PlanInfo:
