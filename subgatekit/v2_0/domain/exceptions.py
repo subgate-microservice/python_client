@@ -62,3 +62,15 @@ class ItemAlreadyExist(Exception):
             index_value=data["index_value"],
             index_key=data["index_key"],
         )
+
+
+class ActiveStatusConflict(Exception):
+    def __init__(self, subscriber_id: str):
+        self.subscriber_id = subscriber_id
+
+    @classmethod
+    def from_json(cls, data):
+        return cls(subscriber_id=data["subscriber_id"])
+
+    def __str__(self):
+        return f"The subscriber with ID '{self.subscriber_id}' already has an active subscription."

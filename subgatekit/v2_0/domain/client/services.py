@@ -4,8 +4,8 @@ from typing import Optional, Iterable, Literal
 
 import httpx
 
-from subgatekit.v2_0.domain.exceptions import ItemNotExist, ItemAlreadyExist
 from subgatekit.v2_0.domain.enums import SubscriptionStatus
+from subgatekit.v2_0.domain.exceptions import ItemNotExist, ItemAlreadyExist, ActiveStatusConflict
 from subgatekit.v2_0.domain.utils import ID
 
 
@@ -19,7 +19,7 @@ def processing_response(response: httpx.Response):
     if response.status_code == 409:
         data = response.json()
         if data["exception_code"] == "active_status_conflict":
-            raise Exception(data)
+            raise ActiveStatusConflict.from_json(data)
         raise ItemAlreadyExist.from_json(data)
 
     if response.status_code == 422:

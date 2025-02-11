@@ -4,6 +4,7 @@ import pytest
 
 from subgatekit.v2_0.domain.entities import Plan, Subscription, UsageRate, Discount
 from subgatekit.v2_0.domain.enums import Period, SubscriptionStatus
+from subgatekit.v2_0.domain.exceptions import ActiveStatusConflict
 from subgatekit.v2_0.domain.utils import get_current_datetime
 from tests.conftest import client, wrapper
 
@@ -121,7 +122,19 @@ class TestUpdateSubscription:
 
     @pytest.mark.asyncio
     async def test_resume_subscription_with_active_status_conflict(self, client):
-        raise NotImplemented
+        # Before
+        plan = Plan("Business", 100, "USD", Period.Monthly)
+        sub1 = Subscription.from_plan(plan, "AnyID")
+        await wrapper(client.subscription_client().create(sub1))
+
+        sub2 = Subscription.from_plan(plan, "AnyID")
+        sub2: Subscription = await wrapper(client.subscription_client().create_then_get(sub2))
+        assert sub2.status == SubscriptionStatus.Paused
+
+        # Try to resume
+        with pytest.raises(ActiveStatusConflict):
+            sub2.resume()
+            await wrapper(client.subscription_client().update(sub2))
 
     @pytest.mark.asyncio
     async def test_renew_subscription_with_active_status_conflict(self, client):
