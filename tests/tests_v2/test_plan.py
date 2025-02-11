@@ -74,3 +74,21 @@ class TestGetPlan:
         # Test
         real: Plan = await wrapper(client.plan_client().get_by_id(expected.id))
         assert real.fields == expected.fields
+
+
+class TestUpdatePlan:
+    @pytest.mark.asyncio
+    async def test_add_usage_rates(self, client):
+        # Before
+        plan = Plan("Simple plan", 100, "USD", Period.Monthly)
+        await wrapper(client.plan_client().create(plan))
+
+        # Update
+        plan: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
+        plan.usage_rates.add(UsageRate("Hello", "first", "GB", 100, Period.Monthly))
+        await wrapper(client.plan_client().update(plan))
+
+        # Check
+        real: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
+        assert len(real.usage_rates.get_all()) == 1
+        assert real.usage_rates.get("first").title == "Hello"
