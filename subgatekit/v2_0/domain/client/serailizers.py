@@ -38,6 +38,7 @@ def serialize_discount(discount: Discount) -> dict:
 def serialize_plan(plan: Plan) -> dict:
     usage_rates = [serialize_usage_rate(x) for x in plan.usage_rates.get_all()]
     discounts = [serialize_discount(x) for x in plan.discounts.get_all()]
+    plan_id = str(plan.id)
     return {
         "title": plan.title,
         "price": plan.price,
@@ -49,17 +50,18 @@ def serialize_plan(plan: Plan) -> dict:
         "fields": plan.fields,
         "usage_rates": usage_rates,
         "discounts": discounts,
-        "id": plan.id,
+        "id": plan_id,
     }
 
 
 def serialize_plann_info(plan_info: PlanInfo) -> dict:
+    plan_info_id = str(plan_info.id)
     return {
         "title": plan_info.title,
         "description": plan_info.description,
         "level": plan_info.level,
         "features": plan_info.features,
-        "id": plan_info.id,
+        "id": plan_info_id,
     }
 
 
@@ -78,6 +80,7 @@ def serialize_subscription(subscription: Subscription) -> dict:
     plan_info = serialize_plann_info(subscription.plan_info)
     usages = [serialize_usage(x) for x in subscription.usages.get_all()]
     discounts = [serialize_discount(x) for x in subscription.discounts.get_all()]
+    subscription_id = str(subscription.id)
     return {
         "subscriber_id": subscription.subscriber_id,
         "billing_info": billing_info,
@@ -86,5 +89,5 @@ def serialize_subscription(subscription: Subscription) -> dict:
         "discounts": discounts,
         "autorenew": subscription.autorenew,
         "fields": subscription.fields,
-        "id": subscription.id,
+        "id": subscription_id,
     }
