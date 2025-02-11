@@ -18,5 +18,8 @@ def test_usage_management():
         Discount("Black friday", "black", 0.2, get_current_datetime(), "")
     )
 
+    sub.usages.get_all()
+
     sub.usages.get("api_call").increase(50)
     assert sub.usages.get("api_call").used_units == 50
+

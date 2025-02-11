@@ -29,5 +29,5 @@ class ItemManager[T]:
         self.get(code)
         self._items[code] = item
 
-    def aslist(self) -> list[T]:
+    def get_all(self) -> list[T]:
         return list(self._items.values())
