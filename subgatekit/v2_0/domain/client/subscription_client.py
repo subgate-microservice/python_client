@@ -1,5 +1,5 @@
-from subgatekit.services.deserializers import deserialize_subscription
 from subgatekit.v2_0.domain.client.base_client import SyncBaseClient
+from subgatekit.v2_0.domain.client.deserializers import deserialize_subscription
 from subgatekit.v2_0.domain.client.serailizers import (
     serialize_subscription,
 )

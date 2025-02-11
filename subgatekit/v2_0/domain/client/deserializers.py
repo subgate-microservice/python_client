@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from subgatekit.v2_0.domain.entities import Plan, UsageRate, Usage, Discount
-from subgatekit.v2_0.domain.enums import Period
-from subgatekit.v2_0.domain.factories import create_plan_with_internal_fields
+from subgatekit.v2_0.domain.entities import Plan, UsageRate, Usage, Discount, PlanInfo, BillingInfo, Subscription
+from subgatekit.v2_0.domain.enums import Period, SubscriptionStatus
+from subgatekit.v2_0.domain.factories import create_plan_with_internal_fields, create_subscription_with_internal_fields
 from subgatekit.v2_0.domain.utils import ID
 
 
@@ -61,4 +61,52 @@ def deserialize_plan(data: dict) -> Plan:
         id=ID(data["id"]),
         created_at=created_at,
         updated_at=updated_at,
+    )
+
+
+def deserialize_plan_info(data: dict) -> PlanInfo:
+    plan_info_id = ID(data["id"])
+    return PlanInfo(
+        title=data["title"],
+        description=data["description"],
+        features=data["features"],
+        level=data["level"],
+        id=plan_info_id,
+    )
+
+
+def deserialize_billing_info(data: dict) -> BillingInfo:
+    billing_cycle = Period(data["billing_cycle"])
+    last_billing = datetime.fromisoformat(data["last_billing"])
+    return BillingInfo(
+        price=data["price"],
+        currency=data["currency"],
+        billing_cycle=billing_cycle,
+        last_billing=last_billing,
+    )
+
+
+def deserialize_subscription(data: dict) -> Subscription:
+    billing_info = deserialize_billing_info(data["billing_info"])
+    plan_info = deserialize_plan_info(data["plan_info"])
+    status = SubscriptionStatus(data["status"])
+    paused_from = datetime.fromisoformat(data["paused_from"]) if data["paused_from"] else None
+    usages = [deserialize_usage(x) for x in data["usages"]]
+    discounts = [deserialize_discount(x) for x in data["discounts"]]
+    created_at = datetime.fromisoformat(data["created_at"])
+    updated_at = datetime.fromisoformat(data["updated_at"])
+    subscription_id = ID(data["id"])
+    return create_subscription_with_internal_fields(
+        subscriber_id=data["subscriber_id"],
+        billing_info=billing_info,
+        plan_info=plan_info,
+        status=status,
+        paused_from=paused_from,
+        usages=usages,
+        discounts=discounts,
+        autorenew=data["autorenew"],
+        fields=data["fields"],
+        created_at=created_at,
+        updated_at=updated_at,
+        id=subscription_id,
     )

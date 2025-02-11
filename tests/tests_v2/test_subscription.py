@@ -31,3 +31,7 @@ class TestGetSubscription:
         plan = Plan("Business", 100, "USD", Period.Monthly)
         sub = Subscription.from_plan(plan, "AnyID")
         await wrapper(client.subscription_client().create(sub))
+
+        # Test
+        real = await wrapper(client.subscription_client().get_by_id(sub.id))
+        assert real.id == sub.id
