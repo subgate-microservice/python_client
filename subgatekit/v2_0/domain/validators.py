@@ -1,5 +1,6 @@
 import json
 from abc import ABC, abstractmethod
+from enum import Enum
 from typing import Any, Self, Type, Union
 
 from subgatekit.client.exceptions import MultipleError
@@ -58,6 +59,24 @@ class TypeValidator(Validator):
         if not isinstance(self._value, self._expected_type):
             self._errors.append(
                 ValidationError(self._field, f"Must be of type {self._expected_type}", self._value)
+            )
+        return self
+
+
+class EnumValidator(Validator):
+    def __init__(
+            self,
+            field: str,
+            value: Any,
+            expected_type: Type[Enum],
+    ):
+        super().__init__(field, value)
+        self._expected_type = expected_type
+
+    def validate(self) -> Self:
+        if self._value not in self._expected_type:
+            self._errors.append(
+                ValidationError(self._field, f"Must be of enum '{self._expected_type}'", self._value)
             )
         return self
 
