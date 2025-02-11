@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import Iterable, Callable, Hashable
 
 
@@ -8,7 +9,7 @@ class ItemManager[T]:
             items: Iterable[T] = None,
     ):
         self._hash_getter = hash_getter
-        self._items = {}
+        self._items = OrderedDict()
         if items:
             for item in items:
                 self.add(item)
