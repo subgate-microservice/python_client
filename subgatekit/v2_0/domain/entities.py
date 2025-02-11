@@ -221,10 +221,10 @@ class Plan:
             TypeValidator("Plan.description", description, str, True),
             TypeValidator("Plan.level", level, int),
             TypeValidator("Plan.features", features, str, True),
-            FieldsValidator("Plan.fields", fields),
+            FieldsValidator("Plan.fields", fields, True),
             ListTypeValidator("Plan.usage_rates", usage_rates, UsageRate, True),
             ListTypeValidator("Plan.discounts", discounts, Discount, True),
-            TypeValidator("Plan.id", id, ID),
+            TypeValidator("Plan.id", id, ID, True),
         ]
         errors = []
         for validator in validators:
