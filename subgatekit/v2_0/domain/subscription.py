@@ -33,8 +33,8 @@ class Subscription:
         self._paused_from = None
         self._created_at = get_current_datetime()
         self._updated_at = self._created_at
-        self._usages: ItemManager[Usage] = ItemManager(usages, lambda x: x.code)
-        self._discounts: ItemManager[Discount] = ItemManager(discounts, lambda x: x.code)
+        self._usages: ItemManager[Usage] = ItemManager(lambda x: x.code, usages)
+        self._discounts: ItemManager[Discount] = ItemManager(lambda x: x.code, discounts)
 
         self.id = id if id else uuid4()
         self.billing_info = billing_info
@@ -47,8 +47,8 @@ class Subscription:
     def from_plan(cls, plan: Plan, subscriber_id: str) -> Self:
         billing_info = BillingInfo.from_plan(plan)
         plan_info = PlanInfo.from_plan(plan)
-        usages = [Usage.from_usage_rate(rate) for rate in plan.usage_rates]
-        discounts = [copy(dis) for dis in plan.discounts]
+        usages = [Usage.from_usage_rate(rate) for rate in plan.usage_rates.aslist()]
+        discounts = [copy(dis) for dis in plan.discounts.aslist()]
         return cls(subscriber_id, billing_info, plan_info, usages=usages, discounts=discounts)
 
     @property
