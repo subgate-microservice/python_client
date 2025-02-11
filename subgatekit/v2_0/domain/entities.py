@@ -339,12 +339,12 @@ class Subscription:
         self.fields = fields if fields else {}
 
     @classmethod
-    def from_plan(cls, plan: Plan, subscriber_id: str) -> Self:
+    def from_plan(cls, plan: Plan, subscriber_id: str, autorenew: bool = False, fields: dict = None) -> Self:
         billing_info = BillingInfo.from_plan(plan)
         plan_info = PlanInfo.from_plan(plan)
         usages = [Usage.from_usage_rate(rate) for rate in plan.usage_rates.get_all()]
         discounts = [copy(dis) for dis in plan.discounts.get_all()]
-        return cls(subscriber_id, billing_info, plan_info, usages=usages, discounts=discounts)
+        return cls(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields)
 
     @property
     def status(self) -> SubscriptionStatus:
