@@ -63,6 +63,30 @@ class TypeValidator(Validator):
         return self
 
 
+class BoundaryValidator(Validator):
+    def __init__(
+            self,
+            field: str,
+            value: Any,
+            ge=None,
+            lt=None,
+    ):
+        super().__init__(field, value)
+        self._ge = ge
+        self._lt = lt
+
+    def validate(self) -> Self:
+        if self._ge is not None and self._value < self._ge:
+            self._errors.append(
+                ValidationError(self._field, f"Must be >= {self._ge}", self._value)
+            )
+        if self._lt is not None and self._value >= self._lt:
+            self._errors.append(
+                ValidationError(self._field, f"Must be < {self._lt}", self._value)
+            )
+        return self
+
+
 class EnumValidator(Validator):
     def __init__(
             self,
