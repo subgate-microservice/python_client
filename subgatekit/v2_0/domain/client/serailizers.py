@@ -54,7 +54,7 @@ def serialize_plan(plan: Plan) -> dict:
     }
 
 
-def serialize_plann_info(plan_info: PlanInfo) -> dict:
+def serialize_plan_info(plan_info: PlanInfo) -> dict:
     plan_info_id = str(plan_info.id)
     return {
         "title": plan_info.title,
@@ -77,10 +77,11 @@ def serialize_billing_info(billing_info: BillingInfo) -> dict:
 
 def serialize_subscription(subscription: Subscription) -> dict:
     billing_info = serialize_billing_info(subscription.billing_info)
-    plan_info = serialize_plann_info(subscription.plan_info)
+    plan_info = serialize_plan_info(subscription.plan_info)
     usages = [serialize_usage(x) for x in subscription.usages.get_all()]
     discounts = [serialize_discount(x) for x in subscription.discounts.get_all()]
     subscription_id = str(subscription.id)
+    paused_from = subscription.paused_from.isoformat() if subscription.paused_from else None
     return {
         "subscriber_id": subscription.subscriber_id,
         "billing_info": billing_info,
@@ -90,4 +91,6 @@ def serialize_subscription(subscription: Subscription) -> dict:
         "autorenew": subscription.autorenew,
         "fields": subscription.fields,
         "id": subscription_id,
+        "status": subscription.status,
+        "paused_from": paused_from,
     }

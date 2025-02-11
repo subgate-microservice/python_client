@@ -3,7 +3,7 @@ import pytest
 from subgatekit.v2_0.domain.entities import Plan, Subscription, UsageRate, Discount
 from subgatekit.v2_0.domain.enums import Period, SubscriptionStatus
 from subgatekit.v2_0.domain.utils import get_current_datetime
-from tests.tests_v2.conftest import client, wrapper
+from tests.conftest import client, wrapper
 
 
 class TestGetSubscription:
@@ -71,6 +71,15 @@ class TestUpdateSubscription:
         sub = Subscription.from_plan(plan, "AnyID", )
         sub: Subscription = await wrapper(client.subscription_client().create_then_get(sub))
         assert sub.status == SubscriptionStatus.Active
+
+        # Update
+        sub.pause()
+        await wrapper(client.subscription_client().update(sub))
+
+        # Check
+        real: Subscription = await wrapper(client.subscription_client().get_by_id(sub.id))
+        assert real.status == SubscriptionStatus.Paused
+        assert real.paused_from is not None
 
     @pytest.mark.asyncio
     async def test_resume_subscription(self, client):

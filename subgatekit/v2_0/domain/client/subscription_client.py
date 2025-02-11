@@ -1,8 +1,13 @@
+from datetime import datetime
+from typing import Iterable
+
+from subgatekit import SubscriptionStatus
 from subgatekit.v2_0.domain.client.base_client import SyncBaseClient
 from subgatekit.v2_0.domain.client.deserializers import deserialize_subscription
 from subgatekit.v2_0.domain.client.serailizers import (
     serialize_subscription,
 )
+from subgatekit.v2_0.domain.client.services import build_query_params
 from subgatekit.v2_0.domain.entities import Subscription
 from subgatekit.v2_0.domain.utils import ID
 
@@ -28,6 +33,23 @@ class SyncSubscriptionClient:
     def delete(self, sub_id: ID) -> None:
         url = f"/subscription/{sub_id}"
         self._base_client.request("DELETE", url)
+
+    def delete_selected(
+            self,
+            ids: Iterable[ID] = None,
+            subscriber_ids: Iterable[str] = None,
+            statuses: Iterable[SubscriptionStatus] = None,
+            expiration_date_gte: datetime = None,
+            expiration_date_lt: datetime = None,
+    ) -> None:
+        sby = build_query_params(
+            ids=ids,
+            subscriber_ids=subscriber_ids,
+            statuses=statuses,
+            expiration_date_gte=expiration_date_gte,
+            expiration_date_lt=expiration_date_lt,
+        )
+        self._base_client.request("DELETE", f"/subscription", params=sby)
 
     def get_by_id(self, sub_id: ID) -> Subscription:
         url = f"/subscription/{sub_id}"
