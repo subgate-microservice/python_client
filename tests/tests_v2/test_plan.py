@@ -92,3 +92,38 @@ class TestUpdatePlan:
         real: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
         assert len(real.usage_rates.get_all()) == 1
         assert real.usage_rates.get("first").title == "Hello"
+
+    @pytest.mark.asyncio
+    async def test_remove_usage_rates(self, client):
+        # Before
+        plan = Plan("Simple plan", 100, "USD", Period.Monthly)
+        plan.usage_rates.add(UsageRate("Hello", "first", "GB", 100, Period.Monthly))
+        plan.usage_rates.add(UsageRate("Hello", "second", "GB", 100, Period.Monthly))
+        await wrapper(client.plan_client().create(plan))
+
+        # Update
+        plan: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
+        plan.usage_rates.remove("second")
+        await wrapper(client.plan_client().update(plan))
+
+        # Check
+        real: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
+        assert len(real.usage_rates.get_all()) == 1
+        assert real.usage_rates.get("first").title == "Hello"
+
+    @pytest.mark.asyncio
+    async def test_add_discounts(self, client):
+        # Before
+        plan = Plan("Simple plan", 100, "USD", Period.Monthly)
+        await wrapper(client.plan_client().create(plan))
+
+        # Update
+        plan: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
+        plan.discounts.add(Discount("Hello", "first", 0.5, get_current_datetime()))
+        await wrapper(client.plan_client().update(plan))
+
+        # Check
+        real: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
+        assert len(real.discounts.get_all()) == 1
+        assert real.discounts.get("first").title == "Hello"
+        
