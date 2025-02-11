@@ -6,7 +6,7 @@ from subgatekit.domain.cycle import Cycle
 from subgatekit.domain.discount import Discount
 from subgatekit.domain.enums import Period
 from subgatekit.domain.usage import UsageRate
-from subgatekit.utils import get_current_datetime
+from subgatekit.v2_0.domain.utils import get_current_datetime
 
 ID = UUID
 

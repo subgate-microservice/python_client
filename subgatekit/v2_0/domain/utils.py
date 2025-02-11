@@ -1,5 +1,6 @@
 import datetime
 from typing import Union
+from uuid import UUID
 
 
 def get_current_datetime():
@@ -7,3 +8,4 @@ def get_current_datetime():
 
 
 Number = Union[int, float]
+ID = UUID

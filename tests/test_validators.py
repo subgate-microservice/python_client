@@ -10,7 +10,7 @@ from subgatekit.domain.enums import Period, SubscriptionStatus
 from subgatekit.domain.plan import Plan
 from subgatekit.domain.subscription import Subscription
 from subgatekit.services.validators import validate
-from subgatekit.utils import get_current_datetime
+from subgatekit.v2_0.domain.utils import get_current_datetime
 
 
 def fake_plan():

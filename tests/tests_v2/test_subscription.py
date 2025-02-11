@@ -1,4 +1,4 @@
-from subgatekit.utils import get_current_datetime
+from subgatekit.v2_0.domain.utils import get_current_datetime
 from subgatekit.v2_0.domain.entities import Plan, Subscription, Usage, Discount
 from subgatekit.v2_0.domain.enums import Period
 

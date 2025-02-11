@@ -1,15 +1,13 @@
 from _datetime import datetime
 from copy import copy
 from typing import Self, Optional, Any
-from uuid import uuid4, UUID
+from uuid import uuid4
 
-from subgatekit.utils import get_current_datetime, Number
+from subgatekit.v2_0.domain.utils import get_current_datetime, Number, ID
 from subgatekit.v2_0.domain.enums import Period, SubscriptionStatus, EventCode
 from subgatekit.v2_0.domain.item_manager import ItemManager
 from subgatekit.v2_0.domain.validators import TypeValidator, EnumValidator, raise_errors_if_necessary, \
     BoundaryValidator, ListTypeValidator, FieldsValidator
-
-ID = UUID
 
 
 class UsageRate:
@@ -228,28 +226,6 @@ class Plan:
         raise_errors_if_necessary(errors)
 
 
-def create_plan_with_internal_fields(
-        title: str,
-        price: float,
-        currency: str,
-        billing_cycle: Period,
-        description: str,
-        level: int,
-        features: str,
-        fields: dict[str, Any],
-        usage_rates: list[UsageRate],
-        discounts: list[Discount],
-        id: ID,
-        created_at: datetime,
-        updated_at: datetime,
-):
-    instance = Plan(title, price, currency, billing_cycle, description, level, features, fields, usage_rates,
-                    discounts, id)
-    object.__setattr__(instance, "_created_at", created_at)
-    object.__setattr__(instance, "_updated_at", updated_at)
-    return instance
-
-
 class PlanInfo:
     def __init__(
             self,
@@ -438,28 +414,6 @@ class Subscription:
         for validator in validators:
             errors.extend(validator.validate().parse_errors())
         raise_errors_if_necessary(errors)
-
-
-def create_subscription_with_internal_fields(
-        subscriber_id: str,
-        billing_info: BillingInfo,
-        plan_info: PlanInfo,
-        status: SubscriptionStatus,
-        paused_from: Optional[datetime],
-        usages: list[Usage],
-        discounts: list[Discount],
-        autorenew: bool,
-        fields: dict,
-        created_at: datetime,
-        updated_at: datetime,
-        id: ID,
-) -> Subscription:
-    instance = Subscription(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields, id)
-    object.__setattr__(instance, "_status", status)
-    object.__setattr__(instance, "_paused_from", paused_from)
-    object.__setattr__(instance, "_created_at", created_at)
-    object.__setattr__(instance, "_updated_at", updated_at)
-    return instance
 
 
 class Webhook:
