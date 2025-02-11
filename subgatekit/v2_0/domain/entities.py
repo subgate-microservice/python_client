@@ -391,6 +391,7 @@ class Subscription:
             from_date = get_current_datetime()
         self.billing_info.last_billing = from_date
         self._status = SubscriptionStatus.Active
+        self._paused_from = None
 
     def expire(self) -> None:
         self._status = SubscriptionStatus.Expired
