@@ -3,10 +3,9 @@ from uuid import uuid4
 import pytest
 
 from subgatekit.utils import get_current_datetime
-from subgatekit.v2_0.domain.billing_info import BillingInfo
+from subgatekit.v2_0.domain.entities import Plan, Subscription, BillingInfo, PlanInfo
 from subgatekit.v2_0.domain.enums import Period
-from subgatekit.v2_0.domain.plan import Plan, PlanInfo
-from subgatekit.v2_0.domain.subscription import Subscription
+
 from subgatekit.v2_0.domain.validators import ValidationError
 
 

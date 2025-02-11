@@ -1,9 +1,6 @@
 from subgatekit.utils import get_current_datetime
-from subgatekit.v2_0.domain.discount import Discount
+from subgatekit.v2_0.domain.entities import Plan, Subscription, Usage, Discount
 from subgatekit.v2_0.domain.enums import Period
-from subgatekit.v2_0.domain.plan import Plan
-from subgatekit.v2_0.domain.subscription import Subscription
-from subgatekit.v2_0.domain.usage import Usage
 
 
 def test_usage_management():
