@@ -1,6 +1,6 @@
-from subgatekit.v2_0.domain.client.base_client import SyncBaseClient
-from subgatekit.v2_0.domain.client.plan_client import SyncPlanClient
-from subgatekit.v2_0.domain.client.subscription_client import SyncSubscriptionClient
+from subgatekit.client.base_client import SyncBaseClient
+from subgatekit.client.plan_client import SyncPlanClient
+from subgatekit.client.subscription_client import SyncSubscriptionClient
 
 
 class SubgateClient:

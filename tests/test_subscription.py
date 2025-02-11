@@ -2,10 +2,10 @@ from datetime import timedelta
 
 import pytest
 
-from subgatekit.v2_0.domain.entities import Plan, Subscription, UsageRate, Discount
-from subgatekit.v2_0.domain.enums import Period, SubscriptionStatus
-from subgatekit.v2_0.domain.exceptions import ActiveStatusConflict
-from subgatekit.v2_0.domain.utils import get_current_datetime
+from subgatekit.entities import Plan, Subscription, UsageRate, Discount
+from subgatekit.enums import Period, SubscriptionStatus
+from subgatekit.exceptions import ActiveStatusConflict
+from subgatekit.utils import get_current_datetime
 from tests.conftest import client, wrapper
 
 

@@ -1,4 +1,4 @@
-from subgatekit.v2_0.domain.entities import UsageRate, Usage, Discount, Plan, PlanInfo, BillingInfo, Subscription
+from subgatekit.entities import UsageRate, Usage, Discount, Plan, PlanInfo, BillingInfo, Subscription
 
 
 def serialize_usage_rate(usage_rate: UsageRate) -> dict:

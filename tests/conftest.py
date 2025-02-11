@@ -4,7 +4,7 @@ from typing import Coroutine, Awaitable
 import pytest
 import pytest_asyncio
 
-from subgatekit.v2_0.domain.client.client import SubgateClient
+from subgatekit.client.client import SubgateClient
 
 CLIENT_BASE_URL = "http://localhost:3000/api/v1"
 CLIENT_APIKEY_VALUE = "TEST_APIKEY_VALUE"

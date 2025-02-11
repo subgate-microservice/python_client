@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Any, Self, Type, Union
 
-from subgatekit.v2_0.domain.exceptions import MultipleError
+from subgatekit.exceptions import MultipleError
 
 
 class ValidationError(Exception):

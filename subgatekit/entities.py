@@ -3,10 +3,10 @@ from copy import copy
 from typing import Self, Optional, Any
 from uuid import uuid4
 
-from subgatekit.v2_0.domain.enums import Period, SubscriptionStatus, EventCode
-from subgatekit.v2_0.domain.item_manager import ItemManager
-from subgatekit.v2_0.domain.utils import get_current_datetime, Number, ID
-from subgatekit.v2_0.domain.validators import (
+from subgatekit.enums import Period, SubscriptionStatus, EventCode
+from subgatekit.item_manager import ItemManager
+from subgatekit.utils import get_current_datetime, Number, ID
+from subgatekit.validators import (
     TypeValidator,
     EnumValidator,
     BoundaryValidator,

@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from subgatekit.v2_0.domain.entities import Plan, UsageRate, Usage, Discount, PlanInfo, BillingInfo, Subscription
-from subgatekit.v2_0.domain.enums import Period, SubscriptionStatus
-from subgatekit.v2_0.domain.factories import create_plan_with_internal_fields, create_subscription_with_internal_fields
-from subgatekit.v2_0.domain.utils import ID
+from subgatekit.entities import Plan, UsageRate, Usage, Discount, PlanInfo, BillingInfo, Subscription
+from subgatekit.enums import Period, SubscriptionStatus
+from subgatekit.factories import create_plan_with_internal_fields, create_subscription_with_internal_fields
+from subgatekit.utils import ID
 
 
 def deserialize_usage_rate(data: dict) -> UsageRate:

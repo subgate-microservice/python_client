@@ -1,8 +1,8 @@
 import pytest
 
-from subgatekit.v2_0.domain.entities import Plan, UsageRate, Discount
-from subgatekit.v2_0.domain.enums import Period
-from subgatekit.v2_0.domain.utils import get_current_datetime
+from subgatekit.entities import Plan, UsageRate, Discount
+from subgatekit.enums import Period
+from subgatekit.utils import get_current_datetime
 from .conftest import client, wrapper
 
 

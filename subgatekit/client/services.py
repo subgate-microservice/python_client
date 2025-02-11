@@ -4,9 +4,9 @@ from typing import Optional, Iterable, Literal
 
 import httpx
 
-from subgatekit.v2_0.domain.enums import SubscriptionStatus
-from subgatekit.v2_0.domain.exceptions import ItemNotExist, ItemAlreadyExist, ActiveStatusConflict
-from subgatekit.v2_0.domain.utils import ID
+from subgatekit.enums import SubscriptionStatus
+from subgatekit.exceptions import ItemNotExist, ItemAlreadyExist, ActiveStatusConflict
+from subgatekit.utils import ID
 
 
 def processing_response(response: httpx.Response):

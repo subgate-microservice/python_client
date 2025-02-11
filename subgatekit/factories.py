@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import Any, Optional
 
-from subgatekit.v2_0.domain.utils import ID
-from subgatekit.v2_0.domain.entities import UsageRate, Discount, Plan, BillingInfo, PlanInfo, Usage, Subscription
-from subgatekit.v2_0.domain.enums import Period, SubscriptionStatus
+from subgatekit.utils import ID
+from subgatekit.entities import UsageRate, Discount, Plan, BillingInfo, PlanInfo, Usage, Subscription
+from subgatekit.enums import Period, SubscriptionStatus
 
 
 def create_plan_with_internal_fields(
