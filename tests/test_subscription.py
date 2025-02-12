@@ -2,7 +2,7 @@ from datetime import timedelta
 
 import pytest
 
-from subgatekit.entities import Plan, Subscription, UsageRate, Discount
+from subgatekit.entities import Plan, Subscription, UsageRate, Discount, Usage
 from subgatekit.enums import Period, SubscriptionStatus
 from subgatekit.exceptions import ActiveStatusConflict
 from subgatekit.utils import get_current_datetime
@@ -104,6 +104,15 @@ class TestUpdateSubscription:
         sync_client.subscription_client().create(sub)
         yield sub
 
+    @pytest.fixture()
+    def subscription_with_discounts(self, sync_client):
+        plan = Plan("Business", 100, "USD", Period.Monthly)
+        sub = Subscription.from_plan(plan, "AnyID", )
+        sub.discounts.add(Discount("First", "first", 0.2, get_current_datetime()))
+        sub.discounts.add(Discount("Second", "second", 0.2, get_current_datetime()))
+        sync_client.subscription_client().create(sub)
+        yield sub
+
     @pytest.mark.asyncio
     async def test_pause_subscription(self, client, simple_subscription):
         # Update
@@ -174,3 +183,48 @@ class TestUpdateSubscription:
         # Check
         real: Subscription = await wrapper(client.subscription_client().get_by_id(subscription_with_usages.id))
         assert real.usages.get("api_call").used_units == 45
+
+    @pytest.mark.asyncio
+    async def test_add_usages(self, client, simple_subscription):
+        # Update
+        simple_subscription.usages.add(
+            Usage("First", "first", "GB", 1000, Period.Monthly)
+        )
+        await wrapper(client.subscription_client().update(simple_subscription))
+
+        # Check
+        real: Subscription = await wrapper(client.subscription_client().get_by_id(simple_subscription.id))
+        assert len(real.usages.get_all()) == 1
+        assert real.usages.get("first").used_units == 0
+
+    @pytest.mark.asyncio
+    async def test_remove_usages(self, client, subscription_with_usages):
+        # Update
+        subscription_with_usages.usages.remove("api_call")
+        await wrapper(client.subscription_client().update(subscription_with_usages))
+
+        # Check
+        real: Subscription = await wrapper(client.subscription_client().get_by_id(subscription_with_usages.id))
+        assert len(real.usages.get_all()) == 0
+
+    @pytest.mark.asyncio
+    async def test_add_discounts(self, client, simple_subscription):
+        # Update
+        simple_subscription.discounts.add(Discount("First", "first", 0.2, get_current_datetime()))
+        simple_subscription.discounts.add(Discount("Second", "second", 0.2, get_current_datetime()))
+        await wrapper(client.subscription_client().update(simple_subscription))
+
+        # Check
+        real: Subscription = await wrapper(client.subscription_client().get_by_id(simple_subscription.id))
+        assert len(real.discounts) == 2
+        assert real.discounts.get("second").size == 0.2
+
+    @pytest.mark.asyncio
+    async def test_remove_discounts(self, client, subscription_with_discounts):
+        # Update
+        subscription_with_discounts.discounts.remove("first")
+        await wrapper(client.subscription_client().update(subscription_with_discounts))
+
+        # Check
+        real: Subscription = await wrapper(client.subscription_client().get_by_id(subscription_with_discounts.id))
+        assert len(real.discounts) == 1

@@ -31,3 +31,10 @@ class ItemManager[T]:
 
     def remove(self, code: str) -> None:
         self._items.pop(code, None)
+
+    def __len__(self):
+        return len(self._items)
+
+    def __iter__(self):
+        for item in self._items.values():
+            yield item
