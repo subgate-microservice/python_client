@@ -1,6 +1,6 @@
 import pytest
 
-from tests.client import get_client
+from snippets.tests.client import get_client
 
 client = get_client()
 
@@ -19,29 +19,24 @@ Create
 
 
 def test_create_subscription():
-    # From python
-    from subgatekit import Period
+    from subgatekit import Period, Plan, Subscription
 
-    personal_plan = client.plan_client().create_plan(
-        title='Personal',
-        price=30,
-        currency='USD',
-        billing_cycle=Period.Quarterly,
-    )
+    personal_plan = Plan('Personal', 30, 'USD', Period.Quarterly)
+    subscription = Subscription.from_plan(personal_plan, 'AnySubscriberID')
+    client.subscription_client().create(subscription)
 
-    subscription = client.subscription_client().create_subscription(
-        subscriber_id='AnySubscriberID',
-        plan=personal_plan,
-    )
-
-    assert subscription.subscriber_id == 'AnySubscriberID'
+    # В некоторых случаях статус созданной подписки может отличаться.
+    # Мы строго рекомендуем перезапросить актуальную версию, чтобы
+    # избежать несогласованности данных.
+    created = client.subscription_client().get_by_id(subscription.id)
 
 
 def test_create_usage_based_subscription():
-    # From  python
-    from subgatekit import Period, UsageRate
+    import datetime
+    from subgatekit import Period, UsageRate, Plan, Subscription, Usage
 
-    usage_rates = [
+    # Create from plan
+    rates = [
         UsageRate(
             title='Api Call',
             code='api_call',
@@ -50,69 +45,68 @@ def test_create_usage_based_subscription():
             renew_cycle=Period.Daily,
         ),
     ]
-    personal_plan = client.plan_client().create_plan(
-        title='Personal',
-        price=30,
-        currency='USD',
-        billing_cycle=Period.Quarterly,
-        usage_rates=usage_rates,
-    )
+    personal_plan = Plan('Personal', 30, 'USD', Period.Quarterly, usage_rates=rates)
+    subscription = Subscription.from_plan(personal_plan, 'AnySubscriberID')
+    client.subscription_client().create(subscription)
 
-    subscription = client.subscription_client().create_subscription(
-        subscriber_id='AnySubscriberID',
-        plan=personal_plan,
+    # Or directly usage management
+    plan_without_usages = Plan('Simple', 50, 'USD', Period.Monthly)
+    subscription = Subscription.from_plan(plan_without_usages, 'AnotherSubscriber')
+    subscription.usages.add(
+        Usage(
+            title='Storage Usage',
+            code='storage_usage',
+            unit='GB',
+            available_units=100,
+            renew_cycle=Period.Lifetime,
+            used_units=0,
+            last_renew=datetime.datetime.now(datetime.UTC),
+        )
     )
-
-    assert subscription.subscriber_id == 'AnySubscriberID'
+    client.subscription_client().create(subscription)
 
 
 def test_create_subscription_with_specific_plan():
-    # From  python
-    from uuid import uuid4
+    import datetime
 
-    from subgatekit import Plan, Period
+    from subgatekit import Period, Subscription, PlanInfo, BillingInfo
 
-    # The plan is not saved anywhere except within the associated subscription
-    individual_plan = Plan(
-        id=uuid4(),
-        title='SuperIndividualPlan',
-        price=0,
-        currency='USD',
-        billing_cycle=Period.Lifetime,
+    plan_info = PlanInfo(
+        title='Specific plan',
+        description='This PlanInfo was created for the next subscription only',
+        level=50,
     )
-
-    subscription = client.subscription_client().create_subscription(
-        subscriber_id='AnySubscriberID',
-        plan=individual_plan,
-    )
-
-    assert subscription.subscriber_id == 'AnySubscriberID'
-
-
-def test_create_subscription_with_custom_fields():
-    # From  python
-    from subgatekit import Period
-
-    plan = client.plan_client().create_plan(
-        title='Business',
+    billing_info = BillingInfo(
         price=100,
         currency='USD',
         billing_cycle=Period.Annual,
+        last_billing=datetime.datetime.now(datetime.UTC),
     )
 
-    subscription = client.subscription_client().create_subscription(
+    subscription = Subscription(
         subscriber_id='AnySubscriberID',
-        plan=plan,
-        fields={
-            'key1': 'value1',
-            'key2': {
-                'inner_key1': 22,
-                'inner_key2': 'Hello world!',
-            },
-        }
+        plan_info=plan_info,
+        billing_info=billing_info,
     )
 
-    assert len(subscription.fields) == 2
+    client.subscription_client().create(subscription)
+
+
+def test_create_subscription_with_custom_fields():
+    from subgatekit import Period, Plan, Subscription
+
+    plan = Plan('Business', 100, 'USD', Period.Annual)
+
+    fields = {
+        'key1': 'value1',
+        'key2': {
+            'inner_key1': 22,
+            'inner_key2': 'Hello world!',
+        },
+    }
+
+    subscription = Subscription.from_plan(plan, 'AnySubscriberID', fields=fields)
+    client.subscription_client().create(subscription)
 
 
 """

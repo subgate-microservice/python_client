@@ -12,7 +12,7 @@ MAPPER = {
     Path("../tests/test_10_client.py"): Path(BASE_MD_DIR, "client.md"),
     Path("../tests/test_20_simple_examples.py"): Path(BASE_MD_DIR, "simple-examples.md"),
     Path("../tests/test_30_plan_management.py"): Path(BASE_MD_DIR, "plan-management.md"),
-    Path("../tests/test_40_subscription_management.py"): Path(BASE_MD_DIR, "subscription-management.md"),
+    Path("../tests/test_40_subscription_management_create.py"): Path(BASE_MD_DIR, "subscription-management.md"),
     Path("../tests/test_50_webhook_management.py"): Path(BASE_MD_DIR, "webhook-management.md"),
 }
 
