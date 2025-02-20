@@ -13,6 +13,9 @@ MAPPER = {
     Path("../tests/test_20_simple_examples.py"): Path(BASE_MD_DIR, "simple-examples.md"),
     Path("../tests/test_30_plan_management.py"): Path(BASE_MD_DIR, "plan-management.md"),
     Path("../tests/test_40_subscription_management_create.py"): Path(BASE_MD_DIR, "subscription-management.md"),
+    Path("../tests/test_41_subscription_management_retrieve.py"): Path(BASE_MD_DIR, "subscription-management.md"),
+    Path("../tests/test_42_subscription_management_update.py"): Path(BASE_MD_DIR, "subscription-management.md"),
+    Path("../tests/test_43_subscription_management_delete.py"): Path(BASE_MD_DIR, "subscription-management.md"),
     Path("../tests/test_50_webhook_management.py"): Path(BASE_MD_DIR, "webhook-management.md"),
 }
 

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Iterable
+from typing import Iterable, Optional
 
 from subgatekit.client.base_client import SyncBaseClient
 from subgatekit.client.deserializers import deserialize_subscription
@@ -30,7 +30,7 @@ class SyncSubscriptionClient:
         data = serialize_subscription(sub)
         self._base_client.request("PUT", url, json=data)
 
-    def delete(self, sub_id: ID) -> None:
+    def delete_by_id(self, sub_id: ID) -> None:
         url = f"/subscription/{sub_id}"
         self._base_client.request("DELETE", url)
 
@@ -55,3 +55,11 @@ class SyncSubscriptionClient:
         url = f"/subscription/{sub_id}"
         json_data = self._base_client.request("GET", url)
         return deserialize_subscription(json_data)
+
+    def get_selected(
+            self,
+    ) -> list[Subscription]:
+        raise NotImplemented
+
+    def get_current_subscription(self, subscriber_id: str) -> Optional[Subscription]:
+        raise NotImplemented
