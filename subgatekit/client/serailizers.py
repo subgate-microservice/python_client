@@ -1,4 +1,4 @@
-from subgatekit.entities import UsageRate, Usage, Discount, Plan, PlanInfo, BillingInfo, Subscription
+from subgatekit.entities import UsageRate, Usage, Discount, Plan, PlanInfo, BillingInfo, Subscription, Webhook
 
 
 def serialize_usage_rate(usage_rate: UsageRate) -> dict:
@@ -94,3 +94,7 @@ def serialize_subscription(subscription: Subscription) -> dict:
         "status": subscription.status,
         "paused_from": paused_from,
     }
+
+
+def serialize_webhook(webhook: Webhook) -> dict:
+    raise NotImplemented

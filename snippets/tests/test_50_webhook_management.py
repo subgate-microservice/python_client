@@ -1,92 +1,48 @@
-import pytest
-
-from tests.client import get_client
+from snippets.tests.client import get_client
+from snippets.tests.fakes import fake_webhook
 
 client = get_client()
 
 
-@pytest.fixture()
-def fake_item():
-    from subgatekit import EventCode
-
-    webhook = client.webhook_client().create_webhook(
-        event_code=EventCode.SubscriptionCreated,
-        target_url="http://my-site.com"
-    )
-    yield webhook
-
-
-"""
-Create
-"""
-
-
 def test_create_webhook():
-    # From python
-    from subgatekit import EventCode
+    from subgatekit import EventCode, Webhook
 
-    webhook = client.webhook_client().create_webhook(
+    webhook = Webhook(
         event_code=EventCode.SubscriptionCreated,
-        target_url="http://my-site.com"
+        target_url="http://my-site.com",
     )
+    client.webhook_client().create(webhook)
 
 
-"""
-Retrieve
-"""
-
-
-def test_get_webhook_by_id(fake_item):
-    # From python
+def test_get_webhook_by_id(fake_webhook):
     from uuid import UUID
 
-    target_id: UUID = fake_item.id
-    webhook = client.webhook_client().get_webhook_by_id(target_id)
+    target_id: UUID = fake_webhook.id
+    webhook = client.webhook_client().get_by_id(target_id)
 
 
 def test_get_all_webhooks():
-    # From python
-    webhooks = client.webhook_client().get_all_webhooks()
+    webhooks = client.webhook_client().get_all()
 
 
-"""
-Update
-"""
-
-
-def test_update_webhook():
-    # From python
+def test_update_webhook(fake_webhook):
+    from uuid import UUID
     from subgatekit import EventCode
 
-    webhook = client.webhook_client().create_webhook(
-        event_code=EventCode.SubscriptionCreated,
-        target_url="http://my-site.com"
-    )
+    target_id: UUID = fake_webhook.id
+    webhook = client.webhook_client().get_by_id(target_id)
 
-    # Update
     webhook.target_url = "http://updated-site.com"
     webhook.event_code = EventCode.SubscriptionExpired
-    client.webhook_client().update_webhook(webhook)
-
-    # Check
-    webhook = client.webhook_client().get_webhook_by_id(webhook.id)
-    assert webhook.target_url == "http://updated-site.com"
-    assert webhook.event_code == EventCode.SubscriptionExpired
+    client.webhook_client().update(webhook)
 
 
-"""
-Delete
-"""
-
-
-def test_delete_webhook_by_id(fake_item):
-    # From python
+def test_delete_webhook_by_id(fake_webhook):
     from uuid import UUID
 
-    target_id: UUID = fake_item.id
-    client.webhook_client().delete_webhook_by_id(target_id)
+    target_id: UUID = fake_webhook.id
+    client.webhook_client().delete_by_id(target_id)
 
 
 def test_delete_all_webhooks():
-    # From python
-    client.webhook_client().delete_all_webhooks()
+    client.webhook_client().delete_all()

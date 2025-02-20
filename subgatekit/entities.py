@@ -26,6 +26,7 @@ class UsageRate:
             renew_cycle: Period,
     ):
         self._validate(title, code, unit, available_units, renew_cycle)
+
         self.title = title
         self.code = code
         self.unit = unit
@@ -65,6 +66,7 @@ class Usage:
             last_renew: datetime = None,
     ):
         self._validate(title, code, unit, available_units, renew_cycle, used_units, last_renew)
+
         self.title = title
         self.code = code
         self.unit = unit
@@ -122,6 +124,7 @@ class Discount:
             description: str = None,
     ):
         self._validate(title, code, size, valid_until, description)
+
         self.title = title
         self.code = code
         self.description = description
@@ -242,6 +245,7 @@ class PlanInfo:
             id: ID = None,
     ):
         self._validate(title, description, level, features, id)
+
         self.title = title
         self.id = id if id else uuid4()
         self.description = description
@@ -281,6 +285,8 @@ class BillingInfo:
             billing_cycle: Period,
             last_billing: datetime = None,
     ):
+        self._validate(price, currency, billing_cycle, last_billing)
+
         self.billing_cycle = billing_cycle
         self.currency = currency
         self.price = price
@@ -426,14 +432,13 @@ class Subscription:
 class Webhook:
     def __init__(
             self,
-            id: ID,
             event_code: EventCode,
             target_url: str,
-            created_at: datetime,
-            updated_at: datetime
+            id: ID = None,
     ):
-        self.id = id
+        dt = get_current_datetime()
+        self.id = id if id else uuid4()
         self.event_code = event_code
         self.target_url = target_url
-        self.created_at = created_at
-        self.updated_at = updated_at
+        self.created_at = dt
+        self.updated_at = dt

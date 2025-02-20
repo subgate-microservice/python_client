@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from subgatekit.entities import Plan, UsageRate, Usage, Discount, PlanInfo, BillingInfo, Subscription
+from subgatekit.entities import Plan, UsageRate, Usage, Discount, PlanInfo, BillingInfo, Subscription, Webhook
 from subgatekit.enums import Period, SubscriptionStatus
 from subgatekit.factories import create_plan_with_internal_fields, create_subscription_with_internal_fields
 from subgatekit.utils import ID
@@ -110,3 +110,7 @@ def deserialize_subscription(data: dict) -> Subscription:
         updated_at=updated_at,
         id=subscription_id,
     )
+
+
+def deserialize_webhook(data: dict) -> Webhook:
+    raise NotImplemented

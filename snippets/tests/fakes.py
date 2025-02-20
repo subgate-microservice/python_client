@@ -29,3 +29,15 @@ def fake_sub_with_usages():
     subscription = Subscription.from_plan(plan, 'AnySubscriberID')
     sub = client.subscription_client().create_then_get(subscription)
     yield sub
+
+
+@pytest.fixture()
+def fake_webhook():
+    from subgatekit import EventCode, Webhook
+
+    webhook = Webhook(
+        event_code=EventCode.SubscriptionCreated,
+        target_url="http://my-site.com",
+    )
+    client.webhook_client().create(webhook)
+    yield webhook
