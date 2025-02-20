@@ -12,18 +12,14 @@ def test_create_plan():
         currency='USD',
         billing_cycle=Period.Monthly,
     )
+
     client.plan_client().create(plan)
 
 
 def test_create_subscription():
-    # From python
-    from subgatekit import Period
+    from subgatekit import Period, Plan, Subscription
 
-    plan = client.plan_client().create_plan("Business", 100, "USD", Period.Monthly)
+    plan = Plan('Business', 100, 'USD', Period.Monthly)
+    sub = Subscription.from_plan(plan, 'AnySubscriberID')
 
-    subscription = client.subscription_client().create_subscription(
-        subscriber_id='AnySubscriberID',
-        plan=plan,
-    )
-
-    assert subscription.plan.id == plan.id
+    client.subscription_client().create(sub)

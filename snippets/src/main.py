@@ -9,11 +9,11 @@ import pytest
 from snippets.src.config import BASE_MD_DIR
 
 MAPPER = {
-    Path("../tests/test_1_client.py"): Path(BASE_MD_DIR, "client.md"),
-    Path("../tests/test_2_simple_examples.py"): Path(BASE_MD_DIR, "simple-examples.md"),
-    Path("../tests/test_3_plan_management.py"): Path(BASE_MD_DIR, "plan-management.md"),
-    Path("../tests/test_4_subscription_management.py"): Path(BASE_MD_DIR, "subscription-management.md"),
-    Path("../tests/test_5_webhook_management.py"): Path(BASE_MD_DIR, "webhook-management.md"),
+    Path("../tests/test_10_client.py"): Path(BASE_MD_DIR, "client.md"),
+    Path("../tests/test_20_simple_examples.py"): Path(BASE_MD_DIR, "simple-examples.md"),
+    Path("../tests/test_30_plan_management.py"): Path(BASE_MD_DIR, "plan-management.md"),
+    Path("../tests/test_40_subscription_management.py"): Path(BASE_MD_DIR, "subscription-management.md"),
+    Path("../tests/test_50_webhook_management.py"): Path(BASE_MD_DIR, "webhook-management.md"),
 }
 
 

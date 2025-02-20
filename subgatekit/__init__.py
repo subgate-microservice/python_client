@@ -1,2 +1,2 @@
 from .client import SubgateClient
-from .entities import Plan, PlanInfo, Period, Subscription, SubscriptionStatus, Usage, Discount
+from .entities import Plan, PlanInfo, Period, Subscription, SubscriptionStatus, Usage, Discount, UsageRate

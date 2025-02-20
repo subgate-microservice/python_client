@@ -1,6 +1,6 @@
 import pytest
 
-from tests.client import get_client
+from snippets.tests.client import get_client
 
 client = get_client()
 
@@ -17,10 +17,9 @@ Create
 
 
 def test_create_simple_plan():
-    # From python
-    from subgatekit import Period
+    from subgatekit import Period, Plan
 
-    personal_plan = client.plan_client().create_plan(
+    personal_plan = Plan(
         title='Personal',
         price=30,
         currency='USD',
@@ -30,7 +29,7 @@ def test_create_simple_plan():
         features='Any features you want to describe',
     )
 
-    business_plan = client.plan_client().create_plan(
+    business_plan = Plan(
         title='Business',
         price=200,
         currency='USD',
@@ -40,13 +39,12 @@ def test_create_simple_plan():
         features='Any features you want to describe',
     )
 
-    assert personal_plan.title == 'Personal'
-    assert business_plan.title == 'Business'
+    client.plan_client().create(personal_plan)
+    client.plan_client().create(business_plan)
 
 
 def test_create_plan_with_usage_rates():
-    # From python
-    from subgatekit import UsageRate, Period
+    from subgatekit import UsageRate, Period, Plan
 
     usage_rates = [
         UsageRate(
@@ -65,21 +63,13 @@ def test_create_plan_with_usage_rates():
         ),
     ]
 
-    plan = client.plan_client().create_plan(
-        title='Personal',
-        price=30,
-        currency='USD',
-        billing_cycle=Period.Quarterly,
-        usage_rates=usage_rates,
-    )
-
-    assert plan.title == 'Personal'
+    plan = Plan('Personal', 30, 'USD', Period.Quarterly, usage_rates=usage_rates)
+    client.plan_client().create(plan)
 
 
 def test_create_plan_with_discounts():
-    # From python
     import datetime
-    from subgatekit import Discount, Period
+    from subgatekit import Discount, Period, Plan
 
     discounts = [
         Discount(
@@ -90,37 +80,24 @@ def test_create_plan_with_discounts():
         ),
     ]
 
-    plan = client.plan_client().create_plan(
-        title='Personal',
-        price=30,
-        currency='USD',
-        billing_cycle=Period.Quarterly,
-        discounts=discounts,
-    )
-
-    assert len(plan.discounts) == len(discounts)
+    plan = Plan('Personal', 30, 'USD', Period.Quarterly, discounts=discounts)
+    client.plan_client().create(plan)
 
 
 def test_create_plan_with_custom_fields():
-    # From python
-    from subgatekit import Period
+    from subgatekit import Period, Plan
 
-    plan = client.plan_client().create_plan(
-        title='Personal',
-        price=30,
-        currency='USD',
-        billing_cycle=Period.Quarterly,
-        fields={
-            'my_specific_field': 1,
-            'any_list_data': ['Hello', 'World!'],
-            'any_dict_data': {
-                'property1': 1,
-                'property2': 2,
-            },
-        }
-    )
+    fields = {
+        'my_specific_field': 1,
+        'any_list_data': ['Hello', 'World!'],
+        'any_dict_data': {
+            'property1': 1,
+            'property2': 2,
+        },
+    }
 
-    assert len(plan.fields) == 3
+    plan = Plan('Personal', 30, 'USD', Period.Quarterly, fields=fields)
+    client.plan_client().create(plan)
 
 
 """
@@ -129,24 +106,23 @@ Retrieve
 
 
 def test_get_plan_by_id(fake_plan):
-    # From python
     from uuid import UUID
 
     target_id: UUID = fake_plan.id
-    plan = client.plan_client().get_plan_by_id(target_id)
-
-    assert plan.id == target_id
+    plan = client.plan_client().get_by_id(target_id)
 
 
 def test_get_all_plans():
-    # From python
-    plans = client.plan_client().get_selected_plans()
+    plans = client.plan_client().get_selected(
+        order_by=[('created_at', 1)],
+        skip=0,
+        limit=100,
+    )
 
 
 def test_get_selected_plans():
-    # From python
     plans = client.plan_client().get_selected_plans(
-        ids=None,  # Iterable[UUID]
+        ids=None,  # UUID | Iterable[UUID]
         order_by=[('created_at', 1)],
         skip=0,
         limit=100,
@@ -159,36 +135,33 @@ Update
 
 
 def test_update_plan():
-    # From python
-    from subgatekit import Period
+    from subgatekit import Period, Plan
 
-    plan = client.plan_client().create_plan(
-        title='Personal',
-        price=30,
-        currency='USD',
-        billing_cycle=Period.Quarterly,
-    )
+    # Create
+    plan = Plan('Personal', 30, 'USD', Period.Quarterly)
+    client.plan_client().create(plan)
 
+    # Update
     plan.price = 100
     plan.currency = 'EUR'
     client.plan_client().update_plan(plan)
 
 
 def test_delete_plan_by_id(fake_plan):
-    # From python
     from uuid import UUID
 
     target_id: UUID = fake_plan.id
-    client.plan_client().delete_plan_by_id(target_id)
+    client.plan_client().delete_by_id(target_id)
 
 
 def test_delete_all_plans():
-    # From python
-    client.plan_client().delete_selected_plans()
+    client.plan_client().delete_selected()
 
 
 def test_delete_selected_plans():
-    # From python
     client.plan_client().delete_selected_plans(
-        ids=None,  # Iterable[UUID]
+        ids=None,  # UUID | Iterable[UUID]
+        order_by=[('created_at', 1)],
+        skip=0,
+        limit=100,
     )
