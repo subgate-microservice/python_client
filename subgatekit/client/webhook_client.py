@@ -24,7 +24,8 @@ class SyncWebhookClient:
         self._base_client.request("DELETE", url)
 
     def delete_all(self):
-        raise NotImplemented
+        url = f"/webhook"
+        self._base_client.request("DELETE", url, json={})
 
     def get_by_id(self, webhook_id: ID) -> Webhook:
         url = f"/webhook/{webhook_id}"
