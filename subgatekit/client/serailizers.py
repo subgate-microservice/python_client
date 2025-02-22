@@ -97,4 +97,9 @@ def serialize_subscription(subscription: Subscription) -> dict:
 
 
 def serialize_webhook(webhook: Webhook) -> dict:
-    raise NotImplemented
+    webhook_id = str(webhook.id)
+    return {
+        "id": webhook_id,
+        "target_url": webhook.target_url,
+        "event_code": webhook.event_code,
+    }
