@@ -1,5 +1,5 @@
 import asyncio
-from typing import Coroutine, Awaitable
+from typing import Coroutine, Awaitable, Union
 
 import pytest
 import pytest_asyncio
@@ -40,7 +40,7 @@ def clear_all(sync_client):
     yield
 
 
-async def wrapper[T](result_or_coro: Awaitable[T]) -> T:
+async def wrapper[T](result_or_coro: Union[T, Awaitable[T]]) -> T:
     if isinstance(result_or_coro, Coroutine):
         return await result_or_coro
     else:
