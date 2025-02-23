@@ -36,7 +36,7 @@ def fake_webhook():
     from subgatekit import EventCode, Webhook
 
     webhook = Webhook(
-        event_code=EventCode.SubscriptionCreated,
+        event_code=EventCode.SubCreated,
         target_url="http://my-site.com",
     )
     client.webhook_client().create(webhook)

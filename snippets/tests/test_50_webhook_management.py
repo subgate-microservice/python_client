@@ -8,7 +8,7 @@ def test_create_webhook():
     from subgatekit import EventCode, Webhook
 
     webhook = Webhook(
-        event_code=EventCode.SubscriptionCreated,
+        event_code=EventCode.SubCreated,
         target_url="http://my-site.com",
     )
     client.webhook_client().create(webhook)
@@ -33,7 +33,7 @@ def test_update_webhook(fake_webhook):
     webhook = client.webhook_client().get_by_id(target_id)
 
     webhook.target_url = "http://updated-site.com"
-    webhook.event_code = EventCode.SubscriptionExpired
+    webhook.event_code = EventCode.SubExpired
     client.webhook_client().update(webhook)
 
 
