@@ -34,8 +34,8 @@ def sync_client():
 
 @pytest.fixture(autouse=True, scope="function")
 def clear_all(sync_client):
-    # subgate_client.plan_client().delete_selected_plans()
-    # subgate_client.webhook_client().delete_all_webhooks()
+    sync_client.plan_client().delete_selected()
+    sync_client.webhook_client().delete_all()
     sync_client.subscription_client().delete_selected()
     yield
 

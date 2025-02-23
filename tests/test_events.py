@@ -74,8 +74,8 @@ async def event_handler(event: Event) -> str:
     return "OK"
 
 
+@pytest.fixture(autouse=True)
 def create_webhooks():
-    client.webhook_client().delete_all()
     for code in EventCode:
         code: EventCode
         hook = Webhook(event_code=code, target_url=f"http://{HOST}:{PORT}/event-handler")
@@ -98,7 +98,6 @@ def core_logic():
 @pytest_asyncio.fixture(scope="module", autouse=True)
 async def fastapi_server():
     server, task = await run_fastapi()
-    create_webhooks()
     yield
     await server.shutdown()
     task.cancel()
@@ -110,7 +109,7 @@ def clear_events():
 
 
 @pytest.mark.asyncio
-async def test_plan(fastapi_server):
+async def test_check_plan_events(fastapi_server):
     plan = Plan("Business", 100, "USD", Period.Annual)
     client.plan_client().create(plan)
 
@@ -244,7 +243,7 @@ class TestSubscription:
         event_store.clear()
 
     @pytest.mark.asyncio
-    async def test_check_events(self):
+    async def test_check_subscription_events(self):
         await self.create()
         await self.add_usage()
         await self.update_usage()

@@ -6,7 +6,7 @@ from subgatekit.client.deserializers import deserialize_plan
 from subgatekit.client.serailizers import (
     serialize_plan,
 )
-from subgatekit.client.services import OrderBy
+from subgatekit.client.services import OrderBy, build_query_params
 from subgatekit.entities import Plan
 from subgatekit.utils import ID
 
@@ -33,7 +33,9 @@ class SyncPlanClient:
             self,
             ids: Union[UUID, Iterable[UUID]] = None,
     ):
-        raise NotImplemented
+        url = f"/plan/"
+        params = build_query_params(ids=ids)
+        self._base_client.request("DELETE", url, params=params)
 
     def get_by_id(self, plan_id: ID) -> Plan:
         url = f"/plan/{plan_id}"
