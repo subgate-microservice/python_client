@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime, timedelta
 
 import pytest
 import pytest_asyncio
@@ -7,7 +8,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel, AwareDatetime
 
 from snippets.tests.client import get_client
-from subgatekit import Webhook, EventCode, Plan, Period, Subscription, Usage, Discount
+from subgatekit import Webhook, EventCode, Plan, Period, Subscription, Usage, Discount, SubscriptionStatus
 from subgatekit.utils import get_current_datetime
 
 
@@ -25,6 +26,20 @@ client = get_client()
 app = FastAPI()
 
 
+def convert(value):
+    try:
+        value = datetime.fromisoformat(value)
+    except (TypeError, ValueError):
+        pass
+
+    if isinstance(value, datetime):
+        value = value.replace(second=0, microsecond=0)
+
+    if isinstance(value, dict):
+        value = {k: convert(v) for k, v in value.items()}
+    return value
+
+
 class EventStore:
     def __init__(self):
         self._events = {}
@@ -39,8 +54,10 @@ class EventStore:
     def check(self, code: EventCode, count: int, **kwargs):
         assert self._events.get(code) is not None
         assert self._counter.get(code, -1) == count
-        for field, value in kwargs.items():
-            assert self._events.get(code).payload[field] == value
+        for field, expected in kwargs.items():
+            real = convert(self._events.get(code).payload[field])
+            expected = convert(expected)
+            assert real == expected
 
     def clear(self):
         self._events = {}
@@ -168,6 +185,63 @@ class TestSubscription:
         await asyncio.sleep(0.1)
         event_store.check(EventCode.SubscriptionDiscountRemoved, 1, title="Black friday")
         event_store.check(EventCode.SubscriptionUpdated, 1, changes={"discounts.black": "action:removed"})
+        event_store.clear()
+
+    async def pause_subscription(self):
+        self.subscription.pause()
+        client.subscription_client().update(self.subscription)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionPaused, 1)
+        event_store.check(EventCode.SubscriptionUpdated, 1, changes={
+            "status": SubscriptionStatus.Paused,
+            "paused_from": self.subscription.paused_from,
+        })
+        event_store.clear()
+
+    async def resume_subscription(self):
+        self.subscription.resume()
+        client.subscription_client().update(self.subscription)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionResumed, 1)
+        event_store.check(EventCode.SubscriptionUpdated, 1, changes={
+            "status": SubscriptionStatus.Active,
+            "paused_from": None,
+        })
+        event_store.clear()
+
+    async def renew_subscription(self):
+        from_date = get_current_datetime() + timedelta(days=2)
+        self.subscription.renew(from_date=from_date)
+        client.subscription_client().update(self.subscription)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionRenewed, 1)
+        event_store.check(EventCode.SubscriptionUpdated, 1, changes={
+            "billing_info.last_billing": from_date,
+        })
+        event_store.clear()
+
+    async def expire_subscription(self):
+        self.subscription.expire()
+        client.subscription_client().update(self.subscription)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionExpired, 1)
+        event_store.check(EventCode.SubscriptionUpdated, 1, changes={
+            "status": SubscriptionStatus.Expired,
+        })
+        event_store.clear()
+
+    async def update_subscription(self):
+        self.subscription.plan_info.title = "Updated"
+        client.subscription_client().update(self.subscription)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionUpdated, 1, changes={"plan_info.title": "Updated"})
+        event_store.clear()
+
+    async def delete_subscription(self):
+        client.subscription_client().delete_by_id(self.subscription.id)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionDeleted, 1, id=str(self.subscription.id))
+        event_store.clear()
 
     @pytest.mark.asyncio
     async def test_check_events(self):
@@ -178,3 +252,9 @@ class TestSubscription:
         await self.add_discount()
         await self.update_discount()
         await self.remove_discount()
+        await self.pause_subscription()
+        await self.resume_subscription()
+        await self.renew_subscription()
+        await self.expire_subscription()
+        await self.update_subscription()
+        await self.delete_subscription()
