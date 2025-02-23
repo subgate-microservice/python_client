@@ -7,7 +7,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel, AwareDatetime
 
 from snippets.tests.client import get_client
-from subgatekit import Webhook, EventCode, Plan, Period, Subscription, Usage
+from subgatekit import Webhook, EventCode, Plan, Period, Subscription, Usage, Discount
+from subgatekit.utils import get_current_datetime
 
 
 class Event(BaseModel):
@@ -113,8 +114,7 @@ class TestSubscription:
         plan = Plan("Business", 100, "USD", Period.Annual)
         self.subscription = Subscription.from_plan(plan, "AnyID")
         client.subscription_client().create(self.subscription)
-
-        await asyncio.sleep(0.2)
+        await asyncio.sleep(0.1)
         event_store.check(EventCode.SubscriptionCreated, 1, subscriber_id=self.subscription.subscriber_id)
 
     async def add_usage(self):
@@ -123,11 +123,58 @@ class TestSubscription:
         )
         client.subscription_client().update(self.subscription)
 
-        await asyncio.sleep(0.2)
+        await asyncio.sleep(0.1)
         event_store.check(EventCode.SubscriptionUsageAdded, 1, title="First")
         event_store.check(EventCode.SubscriptionUpdated, 1, changes={"usages.first": "action:added"})
+        event_store.clear()
+
+    async def update_usage(self):
+        self.subscription.usages.get("first").increase(100)
+        client.subscription_client().update(self.subscription)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionUsageUpdated, 1, delta=100)
+        event_store.check(EventCode.SubscriptionUpdated, 1, changes={"usages.first": "action:updated"})
+        event_store.clear()
+
+    async def remove_usage(self):
+        self.subscription.usages.remove("first")
+        client.subscription_client().update(self.subscription)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionUsageRemoved, 1, title="First")
+        event_store.check(EventCode.SubscriptionUpdated, 1, changes={"usages.first": "action:removed"})
+        event_store.clear()
+
+    async def add_discount(self):
+        self.subscription.discounts.add(
+            Discount("Black friday", "black", 0.2, get_current_datetime())
+        )
+        client.subscription_client().update(self.subscription)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionDiscountAdded, 1, title="Black friday")
+        event_store.check(EventCode.SubscriptionUpdated, 1, changes={"discounts.black": "action:added"})
+        event_store.clear()
+
+    async def update_discount(self):
+        self.subscription.discounts.get("black").size = 0.5
+        client.subscription_client().update(self.subscription)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionDiscountUpdated, 1, changes={"size": 0.5})
+        event_store.check(EventCode.SubscriptionUpdated, 1, changes={"discounts.black": "action:updated"})
+        event_store.clear()
+
+    async def remove_discount(self):
+        self.subscription.discounts.remove("black")
+        client.subscription_client().update(self.subscription)
+        await asyncio.sleep(0.1)
+        event_store.check(EventCode.SubscriptionDiscountRemoved, 1, title="Black friday")
+        event_store.check(EventCode.SubscriptionUpdated, 1, changes={"discounts.black": "action:removed"})
 
     @pytest.mark.asyncio
     async def test_check_events(self):
         await self.create()
         await self.add_usage()
+        await self.update_usage()
+        await self.remove_usage()
+        await self.add_discount()
+        await self.update_discount()
+        await self.remove_discount()
