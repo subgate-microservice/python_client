@@ -2,6 +2,7 @@ import pytest
 
 from subgatekit.entities import Plan, UsageRate, Discount
 from subgatekit.enums import Period
+from subgatekit.exceptions import ItemNotExist
 from subgatekit.utils import get_current_datetime
 from tests.fakes import simple_plan, plan_with_rates, plan_with_discounts, plan_with_fields
 from .conftest import client, wrapper
@@ -108,3 +109,26 @@ class TestUpdatePlan:
         real: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
         assert len(real.discounts.get_all()) == 1
         assert real.discounts.get("second").title == "Second"
+
+
+class TestDeletePlan:
+    @pytest.mark.asyncio
+    async def test_delete_plan_by_id(self, client, simple_plan):
+        await wrapper(client.plan_client().delete_by_id(simple_plan.id))
+
+        # Check
+        with pytest.raises(ItemNotExist):
+            _real = await wrapper(client.plan_client().get_by_id(simple_plan.id))
+
+    @pytest.mark.asyncio
+    async def test_delete_all_plans(self, client, simple_plan, plan_with_rates, plan_with_fields):
+        await wrapper(client.plan_client().delete_selected())
+        real = await wrapper(client.plan_client().get_selected())
+        assert len(real) == 0
+
+    @pytest.mark.asyncio
+    async def test_delete_selected_plans(self, client, simple_plan, plan_with_rates, plan_with_fields):
+        await wrapper(client.plan_client().delete_selected(ids=[simple_plan.id, plan_with_rates.id]))
+
+        real = await wrapper(client.plan_client().get_selected())
+        assert len(real) == 1
