@@ -77,6 +77,11 @@ class TestGetSubscription:
         real = await wrapper(client.subscription_client().get_current_subscription("NotExistUserID"))
         assert real is None
 
+    @pytest.mark.asyncio
+    async def test_get_selected_subscriptions(self, client, simple_subscription, subscription_with_usages):
+        real = await wrapper(client.subscription_client().get_selected())
+        assert len(real) == 2
+
 
 class TestUpdateSubscription:
     @pytest.fixture()
