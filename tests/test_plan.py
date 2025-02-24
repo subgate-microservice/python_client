@@ -3,6 +3,7 @@ import pytest
 from subgatekit.entities import Plan, UsageRate, Discount
 from subgatekit.enums import Period
 from subgatekit.utils import get_current_datetime
+from tests.fakes import simple_plan, plan_with_rates, plan_with_discounts, plan_with_fields
 from .conftest import client, wrapper
 
 
@@ -26,54 +27,30 @@ class TestCreatePlan:
 
 class TestGetPlan:
     @pytest.mark.asyncio
-    async def test_get_by_id(self, client):
-        # Before
-        expected = Plan("SimplePlan", 100, "USD", Period.Annual)
-        await wrapper(client.plan_client().create(expected))
-
-        # Test
-        real = await wrapper(client.plan_client().get_by_id(expected.id))
-        assert real.id == expected.id
+    async def test_get_by_id(self, client, simple_plan):
+        real = await wrapper(client.plan_client().get_by_id(simple_plan.id))
+        assert real.id == simple_plan.id
 
     @pytest.mark.asyncio
-    async def test_get_plan_with_usage_rates(self, client):
-        # Before
-        expected = Plan("With usage rates", 100, "USD", Period.Annual)
-        expected.usage_rates.add(UsageRate("First", "first", "GB", 100, Period.Monthly))
-        expected.usage_rates.add(UsageRate("Second", "sec", "call", 10_000, Period.Daily))
-        await wrapper(client.plan_client().create(expected))
-
-        # Test
-        real: Plan = await wrapper(client.plan_client().get_by_id(expected.id))
-        assert real.id == expected.id
+    async def test_get_plan_with_usage_rates(self, client, plan_with_rates):
+        real: Plan = await wrapper(client.plan_client().get_by_id(plan_with_rates.id))
+        assert real.id == plan_with_rates.id
         assert len(real.usage_rates.get_all()) == 2
         assert real.usage_rates.get("first").title == "First"
-        assert real.usage_rates.get("sec").title == "Second"
+        assert real.usage_rates.get("second").title == "Second"
 
     @pytest.mark.asyncio
-    async def test_get_plan_with_discounts(self, client):
-        # Before
-        expected = Plan("With discounts", 333, "EUR", Period.Monthly)
-        expected.discounts.add(Discount("First", "first", 0.2, get_current_datetime()))
-        expected.discounts.add(Discount("Second", "second", 0.2, get_current_datetime()))
-        client.plan_client().create(expected)
-
-        # Test
-        real: Plan = await wrapper(client.plan_client().get_by_id(expected.id))
-        assert real.id == expected.id
-        assert len(real.discounts.get_all()) == len(expected.discounts.get_all())
+    async def test_get_plan_with_discounts(self, client, plan_with_discounts):
+        real: Plan = await wrapper(client.plan_client().get_by_id(plan_with_discounts.id))
+        assert real.id == plan_with_discounts.id
+        assert len(real.discounts.get_all()) == len(plan_with_discounts.discounts.get_all())
         assert real.discounts.get("first").title == "First"
         assert real.discounts.get("second").title == "Second"
 
     @pytest.mark.asyncio
-    async def test_get_plan_with_fields(self, client):
-        # Before
-        expected = Plan("With fields", 365, "USD", Period.Annual, fields={"Hello": {"World!": 1}})
-        await wrapper(client.plan_client().create(expected))
-
-        # Test
-        real: Plan = await wrapper(client.plan_client().get_by_id(expected.id))
-        assert real.fields == expected.fields
+    async def test_get_plan_with_fields(self, client, plan_with_fields):
+        real: Plan = await wrapper(client.plan_client().get_by_id(plan_with_fields.id))
+        assert real.fields == plan_with_fields.fields
 
 
 class TestUpdatePlan:

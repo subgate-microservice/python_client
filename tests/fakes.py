@@ -5,6 +5,42 @@ from subgatekit.utils import get_current_datetime
 
 
 @pytest.fixture()
+def simple_plan(sync_client):
+    plan = Plan("Personal", 100, "USD", Period.Monthly)
+    sync_client.plan_client().create(plan)
+    yield plan
+
+
+@pytest.fixture()
+def plan_with_rates(sync_client):
+    plan = Plan("Personal", 100, "USD", Period.Monthly)
+    plan.usage_rates.add(
+        UsageRate("First", "first", "GB", 100, Period.Monthly)
+    )
+    plan.usage_rates.add(
+        UsageRate("Second", "second", "request", 10_000, Period.Daily)
+    )
+    sync_client.plan_client().create(plan)
+    yield plan
+
+
+@pytest.fixture()
+def plan_with_discounts(sync_client):
+    plan = Plan("With discounts", 333, "EUR", Period.Monthly)
+    plan.discounts.add(Discount("First", "first", 0.2, get_current_datetime()))
+    plan.discounts.add(Discount("Second", "second", 0.2, get_current_datetime()))
+    sync_client.plan_client().create(plan)
+    yield plan
+
+
+@pytest.fixture()
+def plan_with_fields(sync_client):
+    plan = Plan("With fields", 365, "USD", Period.Annual, fields={"Hello": {"World!": 1}})
+    sync_client.plan_client().create(plan)
+    yield plan
+
+
+@pytest.fixture()
 def simple_subscription(sync_client):
     plan = Plan("Business", 100, "USD", Period.Monthly)
     sub = Subscription.from_plan(plan, "any_id_for_simple_sub", )
