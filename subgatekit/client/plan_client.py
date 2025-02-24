@@ -49,4 +49,7 @@ class SyncPlanClient:
             skip=0,
             limit=100,
     ):
-        raise NotImplemented
+        url = "/plan"
+        params = build_query_params(ids, skip=skip, limit=limit, order_by=order_by)
+        json_data = self._base_client.request("GET", url, params=params)
+        return [deserialize_plan(x) for x in json_data]

@@ -52,16 +52,22 @@ class TestGetPlan:
         real: Plan = await wrapper(client.plan_client().get_by_id(plan_with_fields.id))
         assert real.fields == plan_with_fields.fields
 
+    @pytest.mark.asyncio
+    async def test_get_all_plans(self, client, simple_plan, plan_with_rates, plan_with_fields):
+        real = await wrapper(client.plan_client().get_selected())
+        assert len(real) == 3
+
+    @pytest.mark.asyncio
+    async def test_get_selected_plans(self, client, simple_plan, plan_with_rates, plan_with_fields):
+        real = await wrapper(client.plan_client().get_selected(ids=[simple_plan.id, plan_with_rates.id]))
+        assert len(real) == 2
+
 
 class TestUpdatePlan:
     @pytest.mark.asyncio
-    async def test_add_usage_rates(self, client):
-        # Before
-        plan = Plan("Simple plan", 100, "USD", Period.Monthly)
-        await wrapper(client.plan_client().create(plan))
-
+    async def test_add_usage_rates(self, client, simple_plan):
         # Update
-        plan: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
+        plan: Plan = await wrapper(client.plan_client().get_by_id(simple_plan.id))
         plan.usage_rates.add(UsageRate("Hello", "first", "GB", 100, Period.Monthly))
         await wrapper(client.plan_client().update(plan))
 
@@ -71,31 +77,19 @@ class TestUpdatePlan:
         assert real.usage_rates.get("first").title == "Hello"
 
     @pytest.mark.asyncio
-    async def test_remove_usage_rates(self, client):
-        # Before
-        plan = Plan("Simple plan", 100, "USD", Period.Monthly)
-        plan.usage_rates.add(UsageRate("Hello", "first", "GB", 100, Period.Monthly))
-        plan.usage_rates.add(UsageRate("Hello", "second", "GB", 100, Period.Monthly))
-        await wrapper(client.plan_client().create(plan))
-
-        # Update
-        plan: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
+    async def test_remove_usage_rates(self, client, plan_with_rates):
+        plan: Plan = await wrapper(client.plan_client().get_by_id(plan_with_rates.id))
         plan.usage_rates.remove("second")
         await wrapper(client.plan_client().update(plan))
 
         # Check
         real: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
         assert len(real.usage_rates.get_all()) == 1
-        assert real.usage_rates.get("first").title == "Hello"
+        assert real.usage_rates.get("first").title == "First"
 
     @pytest.mark.asyncio
-    async def test_add_discounts(self, client):
-        # Before
-        plan = Plan("Simple plan", 100, "USD", Period.Monthly)
-        await wrapper(client.plan_client().create(plan))
-
-        # Update
-        plan: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
+    async def test_add_discounts(self, client, simple_plan):
+        plan: Plan = await wrapper(client.plan_client().get_by_id(simple_plan.id))
         plan.discounts.add(Discount("Hello", "first", 0.5, get_current_datetime()))
         await wrapper(client.plan_client().update(plan))
 
@@ -105,19 +99,12 @@ class TestUpdatePlan:
         assert real.discounts.get("first").title == "Hello"
 
     @pytest.mark.asyncio
-    async def test_remove_discounts(self, client):
-        # Before
-        plan = Plan("Simple plan", 100, "USD", Period.Monthly)
-        plan.discounts.add(Discount("Hello", "first", 0.5, get_current_datetime()))
-        plan.discounts.add(Discount("World", "sec", 0.5, get_current_datetime()))
-        await wrapper(client.plan_client().create(plan))
-
-        # Update
-        plan: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
+    async def test_remove_discounts(self, client, plan_with_discounts):
+        plan: Plan = await wrapper(client.plan_client().get_by_id(plan_with_discounts.id))
         plan.discounts.remove("first")
         await wrapper(client.plan_client().update(plan))
 
         # Check
         real: Plan = await wrapper(client.plan_client().get_by_id(plan.id))
         assert len(real.discounts.get_all()) == 1
-        assert real.discounts.get("sec").title == "World"
+        assert real.discounts.get("second").title == "Second"
