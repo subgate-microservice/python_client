@@ -1,6 +1,6 @@
 import pytest
 
-from subgatekit import Subscription, Plan, Period, SubscriptionStatus, Discount, UsageRate
+from subgatekit import Subscription, Plan, Period, SubscriptionStatus, Discount, UsageRate, EventCode, Webhook
 from subgatekit.utils import get_current_datetime
 
 
@@ -83,3 +83,10 @@ def subscription_with_fields(sync_client):
     sub = Subscription.from_plan(plan, "any_id_for_fields_sub", fields={"Hello": "World!"})
     sub = sync_client.subscription_client().create_then_get(sub)
     yield sub
+
+
+@pytest.fixture()
+def simple_webhook(sync_client):
+    hook = Webhook(event_code=EventCode.PlanCreated, target_url="http://my-site.com")
+    sync_client.webhook_client().create(hook)
+    yield hook

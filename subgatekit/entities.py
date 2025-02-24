@@ -440,5 +440,13 @@ class Webhook:
         self.id = id if id else uuid4()
         self.event_code = event_code
         self.target_url = target_url
-        self.created_at = dt
-        self.updated_at = dt
+        self._created_at = dt
+        self._updated_at = dt
+
+    @property
+    def created_at(self) -> datetime:
+        return self._created_at
+
+    @property
+    def updated_at(self) -> datetime:
+        return self._updated_at

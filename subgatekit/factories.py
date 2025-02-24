@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import Any, Optional
 
+from subgatekit.entities import UsageRate, Discount, Plan, BillingInfo, PlanInfo, Usage, Subscription, Webhook
+from subgatekit.enums import Period, SubscriptionStatus, EventCode
 from subgatekit.utils import ID
-from subgatekit.entities import UsageRate, Discount, Plan, BillingInfo, PlanInfo, Usage, Subscription
-from subgatekit.enums import Period, SubscriptionStatus
 
 
 def create_plan_with_internal_fields(
@@ -45,6 +45,19 @@ def create_subscription_with_internal_fields(
     instance = Subscription(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields, id)
     object.__setattr__(instance, "_status", status)
     object.__setattr__(instance, "_paused_from", paused_from)
+    object.__setattr__(instance, "_created_at", created_at)
+    object.__setattr__(instance, "_updated_at", updated_at)
+    return instance
+
+
+def create_webhook_with_internal_fields(
+        id: ID,
+        event_code: EventCode,
+        target_url: str,
+        created_at: datetime,
+        updated_at: datetime,
+) -> Webhook:
+    instance = Webhook(event_code, target_url, id)
     object.__setattr__(instance, "_created_at", created_at)
     object.__setattr__(instance, "_updated_at", updated_at)
     return instance

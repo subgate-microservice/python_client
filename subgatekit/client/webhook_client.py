@@ -33,4 +33,6 @@ class SyncWebhookClient:
         return deserialize_webhook(json_data)
 
     def get_all(self):
-        raise NotImplemented
+        url = f"/webhook"
+        json_data = self._base_client.request("GET", url)
+        return [deserialize_webhook(x) for x in json_data]
