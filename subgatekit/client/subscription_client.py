@@ -1,12 +1,13 @@
 from datetime import datetime
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
+from uuid import UUID
 
 from subgatekit.client.base_client import SyncBaseClient
 from subgatekit.client.deserializers import deserialize_subscription
 from subgatekit.client.serailizers import (
     serialize_subscription,
 )
-from subgatekit.client.services import build_query_params
+from subgatekit.client.services import build_query_params, OrderBy
 from subgatekit.entities import Subscription
 from subgatekit.enums import SubscriptionStatus
 from subgatekit.utils import ID
@@ -58,8 +59,26 @@ class SyncSubscriptionClient:
 
     def get_selected(
             self,
+            ids: Union[UUID, Iterable[UUID]] = None,
+            subscriber_ids: Union[str, Iterable[str]] = None,
+            statuses: Union[SubscriptionStatus, Iterable[SubscriptionStatus]] = None,
+            expiration_date_lt: datetime = None,
+            expiration_date_lte: datetime = None,
+            expiration_date_gt: datetime = None,
+            expiration_date_gte: datetime = None,
+            order_by: OrderBy = None,
+            skip=0,
+            limit=100,
     ) -> list[Subscription]:
-        raise NotImplemented
+        url = f"/subscription"
+        params = build_query_params(ids, subscriber_ids, statuses, expiration_date_gte, expiration_date_gt,
+                                    expiration_date_lte, expiration_date_lt, skip, limit, order_by)
+        json_data = self._base_client.request("GET", url, params=params)
+        return [deserialize_subscription(x) for x in json_data]
 
     def get_current_subscription(self, subscriber_id: str) -> Optional[Subscription]:
-        raise NotImplemented
+        url = f"/subscription/active-one/{subscriber_id}"
+        json_data = self._base_client.request("GET", url)
+        if json_data:
+            return deserialize_subscription(json_data)
+        return None

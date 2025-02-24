@@ -79,6 +79,5 @@ def build_query_params(
         params["skip"] = skip
     if limit is not None:
         params["limit"] = limit
-    if order_by is not None:
-        params["order_by"] = [f"{col},{asc}" for col, asc in order_by]
+    params["order_by"] = [f"{col},{asc}" for col, asc in order_by] if order_by else ["created_at,1"]
     return params
