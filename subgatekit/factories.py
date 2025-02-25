@@ -54,10 +54,12 @@ def create_webhook_with_internal_fields(
         id: ID,
         event_code: EventCode,
         target_url: str,
+        max_retries: int,
+        delays: tuple[int],
         created_at: datetime,
         updated_at: datetime,
 ) -> Webhook:
-    instance = Webhook(event_code, target_url, id)
+    instance = Webhook(event_code, target_url, max_retries, delays, id)
     object.__setattr__(instance, "_created_at", created_at)
     object.__setattr__(instance, "_updated_at", updated_at)
     return instance

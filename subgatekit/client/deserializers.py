@@ -118,10 +118,13 @@ def deserialize_webhook(data: dict) -> Webhook:
     updated_at = datetime.fromisoformat(data["updated_at"])
     webhook_id = ID(data["id"])
     code = EventCode(data["event_code"])
+    delays = tuple(data["delays"]) if isinstance(data["delays"], list) else data["delays"]
     return create_webhook_with_internal_fields(
         id=webhook_id,
         target_url=data["target_url"],
         event_code=code,
+        delays=delays,
+        max_retries=data["max_retries"],
         created_at=created_at,
         updated_at=updated_at,
     )

@@ -1,6 +1,6 @@
 from _datetime import datetime
 from copy import copy
-from typing import Self, Optional, Any
+from typing import Self, Optional, Any, Union, Sequence
 from uuid import uuid4
 
 from subgatekit.enums import Period, SubscriptionStatus, EventCode
@@ -434,12 +434,16 @@ class Webhook:
             self,
             event_code: EventCode,
             target_url: str,
+            max_retries=13,
+            delays: Union[int, Sequence[int]] = None,
             id: ID = None,
     ):
         dt = get_current_datetime()
         self.id = id if id else uuid4()
         self.event_code = event_code
         self.target_url = target_url
+        self.max_retries = max_retries
+        self.delays = delays if delays else (0, 9, 29, 180, 600, 1_800, 3_600, 7_200, 14_400, 28_800, 57_600, 86_400)
         self._created_at = dt
         self._updated_at = dt
 

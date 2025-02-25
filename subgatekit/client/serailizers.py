@@ -102,4 +102,6 @@ def serialize_webhook(webhook: Webhook) -> dict:
         "id": webhook_id,
         "target_url": webhook.target_url,
         "event_code": webhook.event_code,
+        "delays": webhook.delays,
+        "max_retries": webhook.max_retries,
     }

@@ -90,3 +90,10 @@ def simple_webhook(sync_client):
     hook = Webhook(event_code=EventCode.PlanCreated, target_url="http://my-site.com")
     sync_client.webhook_client().create(hook)
     yield hook
+
+
+@pytest.fixture()
+def webhook_with_constant_delays(sync_client):
+    hook = Webhook(event_code=EventCode.PlanCreated, target_url="http://my-site.com", delays=3)
+    sync_client.webhook_client().create(hook)
+    yield hook
