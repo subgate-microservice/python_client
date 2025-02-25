@@ -3,7 +3,7 @@ import pytest
 from subgatekit import Webhook, EventCode
 from subgatekit.exceptions import ItemNotExist
 from tests.conftest import client, wrapper, sync_client
-from tests.fakes import simple_webhook, webhook_with_constant_delays
+from tests.fakes import simple_webhook
 
 
 @pytest.fixture()
@@ -22,11 +22,6 @@ class TestCreate:
         hook = Webhook(event_code=EventCode.PlanCreated, target_url="http://my-site.com")
         await wrapper(client.webhook_client().create(hook))
 
-    @pytest.mark.asyncio
-    async def test_create_with_constant_delays(self, client):
-        hook = Webhook(event_code=EventCode.PlanCreated, target_url="http://my-site.com", delays=1, max_retries=3)
-        await wrapper(client.webhook_client().create(hook))
-
 
 class TestGet:
     @pytest.mark.asyncio
@@ -38,11 +33,6 @@ class TestGet:
     async def test_get_all_webhooks(self, client, webhooks):
         real = await wrapper(client.webhook_client().get_all())
         assert len(real) == len(webhooks)
-
-    @pytest.mark.asyncio
-    async def test_get_webhook_with_constant_delays(self, client, webhook_with_constant_delays):
-        real = await wrapper(client.webhook_client().get_by_id(webhook_with_constant_delays.id))
-        assert real.delays == 3
 
 
 class TestUpdate:

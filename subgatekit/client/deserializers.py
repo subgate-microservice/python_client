@@ -124,7 +124,6 @@ def deserialize_webhook(data: dict) -> Webhook:
         target_url=data["target_url"],
         event_code=code,
         delays=delays,
-        max_retries=data["max_retries"],
         created_at=created_at,
         updated_at=updated_at,
     )
