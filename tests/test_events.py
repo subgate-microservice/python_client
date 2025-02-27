@@ -125,7 +125,10 @@ async def test_check_plan_events(fastapi_server):
     # Check
     await asyncio.sleep(DELAY)
     event_store.check(EventCode.PlanCreated, 1, title="Business")
-    event_store.check(EventCode.PlanUpdated, 1, changes={"price": 200.0})
+    event_store.check(EventCode.PlanUpdated, 1, changes={
+        "price": 200.0,
+        "updated_at": get_current_datetime(),
+    })
     event_store.check(EventCode.PlanDeleted, 1, title="Business", price=200)
 
 
