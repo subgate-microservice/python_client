@@ -72,6 +72,7 @@ def serialize_billing_info(billing_info: BillingInfo) -> dict:
         "currency": billing_info.currency,
         "billing_cycle": billing_info.billing_cycle,
         "last_billing": last_billing,
+        "saved_days": billing_info.saved_days,
     }
 
 

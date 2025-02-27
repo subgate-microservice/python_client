@@ -1,5 +1,15 @@
 from enum import StrEnum
 
+_cycle_days = {
+    "daily": 1,
+    "weekly": 7,
+    "monthly": 30,
+    "quarterly": 92,
+    "semiannual": 183,
+    "annual": 365,
+    "lifetime": 365_000,
+}
+
 
 class Period(StrEnum):
     Daily = "daily"
@@ -9,6 +19,9 @@ class Period(StrEnum):
     Semiannual = "semiannual"
     Annual = "annual"
     Lifetime = "lifetime"
+
+    def get_cycle_in_days(self) -> int:
+        return _cycle_days[self.value]
 
 
 class SubscriptionStatus(StrEnum):

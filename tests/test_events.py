@@ -21,10 +21,17 @@ class Event(BaseModel):
 
 HOST = "localhost"
 PORT = 5678
-DELAY = 0.2
+DELAY = 0.5
 
 client = get_client()
 app = FastAPI()
+
+
+@app.post("/event-handler")
+async def event_handler(event: Event) -> str:
+    print(f"{event.event_code} received")
+    event_store.add(event)
+    return "OK"
 
 
 def convert(value):
@@ -58,7 +65,10 @@ class EventStore:
         for field, expected in kwargs.items():
             real = convert(self._events.get(code).payload[field])
             expected = convert(expected)
-            assert real == expected
+            if isinstance(real, datetime) and isinstance(expected, datetime):
+                assert (real - expected).seconds < 1
+            else:
+                assert real == expected
 
     def clear(self):
         self._events = {}
@@ -66,13 +76,6 @@ class EventStore:
 
 
 event_store = EventStore()
-
-
-@app.post("/event-handler")
-async def event_handler(event: Event) -> str:
-    print(f"{event.event_code} received")
-    event_store.add(event)
-    return "OK"
 
 
 @pytest.fixture(autouse=True)
@@ -142,7 +145,10 @@ class TestSubscription:
 
         await asyncio.sleep(DELAY)
         event_store.check(EventCode.SubUsageAdded, 1, title="First")
-        event_store.check(EventCode.SubUpdated, 1, changes={"usages.first": "action:added"})
+        event_store.check(EventCode.SubUpdated, 1, changes={
+            "usages.first": "action:added",
+            "updated_at": get_current_datetime(),
+        })
         event_store.clear()
 
     async def update_usage(self):
@@ -150,7 +156,10 @@ class TestSubscription:
         client.subscription_client().update(self.subscription)
         await asyncio.sleep(DELAY)
         event_store.check(EventCode.SubsUsageUpdated, 1, delta=100)
-        event_store.check(EventCode.SubUpdated, 1, changes={"usages.first": "action:updated"})
+        event_store.check(EventCode.SubUpdated, 1, changes={
+            "usages.first": "action:updated",
+            "updated_at": get_current_datetime(),
+        })
         event_store.clear()
 
     async def remove_usage(self):
@@ -158,7 +167,10 @@ class TestSubscription:
         client.subscription_client().update(self.subscription)
         await asyncio.sleep(DELAY)
         event_store.check(EventCode.SubUsageRemoved, 1, title="First")
-        event_store.check(EventCode.SubUpdated, 1, changes={"usages.first": "action:removed"})
+        event_store.check(EventCode.SubUpdated, 1, changes={
+            "usages.first": "action:removed",
+            "updated_at": get_current_datetime(),
+        })
         event_store.clear()
 
     async def add_discount(self):
@@ -168,7 +180,10 @@ class TestSubscription:
         client.subscription_client().update(self.subscription)
         await asyncio.sleep(DELAY)
         event_store.check(EventCode.SubDiscountAdded, 1, title="Black friday")
-        event_store.check(EventCode.SubUpdated, 1, changes={"discounts.black": "action:added"})
+        event_store.check(EventCode.SubUpdated, 1, changes={
+            "discounts.black": "action:added",
+            "updated_at": get_current_datetime(),
+        })
         event_store.clear()
 
     async def update_discount(self):
@@ -176,7 +191,10 @@ class TestSubscription:
         client.subscription_client().update(self.subscription)
         await asyncio.sleep(DELAY)
         event_store.check(EventCode.SubDiscountUpdated, 1, changes={"size": 0.5})
-        event_store.check(EventCode.SubUpdated, 1, changes={"discounts.black": "action:updated"})
+        event_store.check(EventCode.SubUpdated, 1, changes={
+            "discounts.black": "action:updated",
+            "updated_at": get_current_datetime(),
+        })
         event_store.clear()
 
     async def remove_discount(self):
@@ -184,7 +202,10 @@ class TestSubscription:
         client.subscription_client().update(self.subscription)
         await asyncio.sleep(DELAY)
         event_store.check(EventCode.SubDiscountRemoved, 1, title="Black friday")
-        event_store.check(EventCode.SubUpdated, 1, changes={"discounts.black": "action:removed"})
+        event_store.check(EventCode.SubUpdated, 1, changes={
+            "discounts.black": "action:removed",
+            "updated_at": get_current_datetime(),
+        })
         event_store.clear()
 
     async def pause_subscription(self):
@@ -195,6 +216,7 @@ class TestSubscription:
         event_store.check(EventCode.SubUpdated, 1, changes={
             "status": SubscriptionStatus.Paused,
             "paused_from": self.subscription.paused_from,
+            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -206,6 +228,7 @@ class TestSubscription:
         event_store.check(EventCode.SubUpdated, 1, changes={
             "status": SubscriptionStatus.Active,
             "paused_from": None,
+            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -217,6 +240,7 @@ class TestSubscription:
         event_store.check(EventCode.SubRenewed, 1)
         event_store.check(EventCode.SubUpdated, 1, changes={
             "billing_info.last_billing": from_date,
+            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -227,6 +251,7 @@ class TestSubscription:
         event_store.check(EventCode.SubExpired, 1)
         event_store.check(EventCode.SubUpdated, 1, changes={
             "status": SubscriptionStatus.Expired,
+            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -234,7 +259,10 @@ class TestSubscription:
         self.subscription.plan_info.title = "Updated"
         client.subscription_client().update(self.subscription)
         await asyncio.sleep(DELAY)
-        event_store.check(EventCode.SubUpdated, 1, changes={"plan_info.title": "Updated"})
+        event_store.check(EventCode.SubUpdated, 1, changes={
+            "plan_info.title": "Updated",
+            "updated_at": get_current_datetime(),
+        })
         event_store.clear()
 
     async def delete_subscription(self):

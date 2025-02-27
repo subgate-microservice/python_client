@@ -1,4 +1,4 @@
-from _datetime import datetime
+from _datetime import datetime, timedelta
 from copy import copy
 from typing import Self, Optional, Any, Sequence
 from uuid import uuid4
@@ -284,13 +284,22 @@ class BillingInfo:
             currency: str,
             billing_cycle: Period,
             last_billing: datetime = None,
+            saved_days: int = 0
     ):
-        self._validate(price, currency, billing_cycle, last_billing)
+        self._validate(price, currency, billing_cycle, last_billing, saved_days)
 
         self.billing_cycle = billing_cycle
         self.currency = currency
         self.price = price
         self.last_billing = last_billing if last_billing else get_current_datetime()
+        self.saved_days = saved_days
+
+    @property
+    def next_billing_date(self):
+        return (self.last_billing
+                + timedelta(days=self.billing_cycle.get_cycle_in_days())
+                + timedelta(days=self.saved_days)
+                )
 
     @classmethod
     def from_plan(cls, plan: Plan) -> Self:
@@ -302,12 +311,14 @@ class BillingInfo:
             currency: str,
             billing_cycle: Period,
             last_billing: datetime,
+            saved_days: int,
     ):
         validators = [
             TypeValidator("BillingInfo.price", price, Number),
             TypeValidator("BillingInfo.currency", currency, str),
             EnumValidator("BillingInfo.billing_cycle", billing_cycle, Period),
             TypeValidator("BillingInfo.last_billing", last_billing, datetime, True),
+            TypeValidator("BillingInfo.saved_days", saved_days, int)
         ]
         errors = []
         for validator in validators:
@@ -447,7 +458,7 @@ class Webhook:
 
     @property
     def max_retries(self):
-        return len(self.delays) + 1
+        return len(self.delays)
 
     @property
     def created_at(self) -> datetime:

@@ -84,6 +84,7 @@ def deserialize_billing_info(data: dict) -> BillingInfo:
         currency=data["currency"],
         billing_cycle=billing_cycle,
         last_billing=last_billing,
+        saved_days=data["saved_days"],
     )
 
 
