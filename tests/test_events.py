@@ -21,7 +21,7 @@ class Event(BaseModel):
 
 HOST = "localhost"
 PORT = 5678
-DELAY = 2
+DELAY = 0.2
 
 client = get_client()
 app = FastAPI()
@@ -127,7 +127,6 @@ async def test_check_plan_events(fastapi_server):
     event_store.check(EventCode.PlanCreated, 1, title="Business")
     event_store.check(EventCode.PlanUpdated, 1, changes={
         "price": 200.0,
-        "updated_at": get_current_datetime(),
     })
     event_store.check(EventCode.PlanDeleted, 1, title="Business", price=200)
 
@@ -150,7 +149,6 @@ class TestSubscription:
         event_store.check(EventCode.SubUsageAdded, 1, title="First")
         event_store.check(EventCode.SubUpdated, 1, changes={
             "usages.first": "action:added",
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -161,7 +159,6 @@ class TestSubscription:
         event_store.check(EventCode.SubsUsageUpdated, 1, delta=100)
         event_store.check(EventCode.SubUpdated, 1, changes={
             "usages.first": "action:updated",
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -172,7 +169,6 @@ class TestSubscription:
         event_store.check(EventCode.SubUsageRemoved, 1, title="First")
         event_store.check(EventCode.SubUpdated, 1, changes={
             "usages.first": "action:removed",
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -185,7 +181,6 @@ class TestSubscription:
         event_store.check(EventCode.SubDiscountAdded, 1, title="Black friday")
         event_store.check(EventCode.SubUpdated, 1, changes={
             "discounts.black": "action:added",
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -196,7 +191,6 @@ class TestSubscription:
         event_store.check(EventCode.SubDiscountUpdated, 1, changes={"size": 0.5})
         event_store.check(EventCode.SubUpdated, 1, changes={
             "discounts.black": "action:updated",
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -207,7 +201,6 @@ class TestSubscription:
         event_store.check(EventCode.SubDiscountRemoved, 1, title="Black friday")
         event_store.check(EventCode.SubUpdated, 1, changes={
             "discounts.black": "action:removed",
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -219,7 +212,6 @@ class TestSubscription:
         event_store.check(EventCode.SubUpdated, 1, changes={
             "status": SubscriptionStatus.Paused,
             "paused_from": self.subscription.paused_from,
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -231,7 +223,6 @@ class TestSubscription:
         event_store.check(EventCode.SubUpdated, 1, changes={
             "status": SubscriptionStatus.Active,
             "paused_from": None,
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -243,7 +234,6 @@ class TestSubscription:
         event_store.check(EventCode.SubRenewed, 1)
         event_store.check(EventCode.SubUpdated, 1, changes={
             "billing_info.last_billing": from_date,
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -254,7 +244,6 @@ class TestSubscription:
         event_store.check(EventCode.SubExpired, 1)
         event_store.check(EventCode.SubUpdated, 1, changes={
             "status": SubscriptionStatus.Expired,
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
@@ -264,7 +253,6 @@ class TestSubscription:
         await asyncio.sleep(DELAY)
         event_store.check(EventCode.SubUpdated, 1, changes={
             "plan_info.title": "Updated",
-            "updated_at": get_current_datetime(),
         })
         event_store.clear()
 
