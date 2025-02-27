@@ -21,7 +21,7 @@ class Event(BaseModel):
 
 HOST = "localhost"
 PORT = 5678
-DELAY = 0.5
+DELAY = 2
 
 client = get_client()
 app = FastAPI()
