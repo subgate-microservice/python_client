@@ -40,15 +40,19 @@ class SyncSubscriptionClient:
             ids: Iterable[ID] = None,
             subscriber_ids: Iterable[str] = None,
             statuses: Iterable[SubscriptionStatus] = None,
+            expiration_date_gt: datetime = None,
             expiration_date_gte: datetime = None,
             expiration_date_lt: datetime = None,
+            expiration_date_lte: datetime = None,
     ) -> None:
         sby = build_query_params(
             ids=ids,
             subscriber_ids=subscriber_ids,
             statuses=statuses,
             expiration_date_gte=expiration_date_gte,
+            expiration_date_gt=expiration_date_gt,
             expiration_date_lt=expiration_date_lt,
+            expiration_date_lte=expiration_date_lte,
         )
         self._base_client.request("DELETE", f"/subscription", params=sby)
 
@@ -62,10 +66,10 @@ class SyncSubscriptionClient:
             ids: Union[UUID, Iterable[UUID]] = None,
             subscriber_ids: Union[str, Iterable[str]] = None,
             statuses: Union[SubscriptionStatus, Iterable[SubscriptionStatus]] = None,
-            expiration_date_lt: datetime = None,
-            expiration_date_lte: datetime = None,
             expiration_date_gt: datetime = None,
             expiration_date_gte: datetime = None,
+            expiration_date_lt: datetime = None,
+            expiration_date_lte: datetime = None,
             order_by: OrderBy = None,
             skip=0,
             limit=100,

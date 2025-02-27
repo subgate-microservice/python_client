@@ -1,5 +1,4 @@
 from snippets.tests.client import get_client
-from snippets.tests.fakes import fake_sub
 
 client = get_client()
 
@@ -11,9 +10,6 @@ def test_create_subscription():
     subscription = Subscription.from_plan(personal_plan, 'AnySubscriberID')
     client.subscription_client().create(subscription)
 
-    # В некоторых случаях статус созданной подписки может отличаться.
-    # Мы строго рекомендуем перезапросить актуальную версию, чтобы
-    # избежать несогласованности данных.
     created = client.subscription_client().get_by_id(subscription.id)
 
 
@@ -93,4 +89,3 @@ def test_create_subscription_with_custom_fields():
 
     subscription = Subscription.from_plan(plan, 'AnySubscriberID', fields=fields)
     client.subscription_client().create(subscription)
-
