@@ -1,7 +1,7 @@
-from subgatekit.client.base_client import SyncBaseClient
-from subgatekit.client.plan_client import SyncPlanClient
-from subgatekit.client.subscription_client import SyncSubscriptionClient
-from subgatekit.client.webhook_client import SyncWebhookClient
+from subgatekit.client.base_client import SyncBaseClient, AsyncBaseClient
+from subgatekit.client.plan_client import SyncPlanClient, AsyncPlanClient
+from subgatekit.client.subscription_client import SyncSubscriptionClient, AsyncSubscriptionClient
+from subgatekit.client.webhook_client import SyncWebhookClient, AsyncWebhookClient
 
 
 class SubgateClient:
@@ -18,4 +18,21 @@ class SubgateClient:
         return self._sub_client
 
     def webhook_client(self) -> SyncWebhookClient:
+        return self._webhook_client
+
+
+class AsyncSubgateClient:
+    def __init__(self, base_url: str, apikey: str):
+        base_client = AsyncBaseClient(base_url, apikey)
+        self._plan_client = AsyncPlanClient(base_client)
+        self._sub_client = AsyncSubscriptionClient(base_client)
+        self._webhook_client = AsyncWebhookClient(base_client)
+
+    def plan_client(self) -> AsyncPlanClient:
+        return self._plan_client
+
+    def subscription_client(self) -> AsyncSubscriptionClient:
+        return self._sub_client
+
+    def webhook_client(self) -> AsyncWebhookClient:
         return self._webhook_client

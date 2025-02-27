@@ -1,4 +1,4 @@
-from .client import SubgateClient
+from .client import SubgateClient, AsyncSubgateClient
 from .entities import (
     BillingInfo,
     Discount,
