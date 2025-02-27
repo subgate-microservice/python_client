@@ -1,5 +1,5 @@
 from snippets.tests.client import get_client
-from snippets.tests.fakes import fake_sub, fake_sub_with_usages
+from snippets.tests.fakes import fake_sub
 
 client = get_client()
 

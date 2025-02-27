@@ -50,10 +50,12 @@ def test_create_usage_based_subscription():
 
 def test_create_subscription_with_specific_plan():
     import datetime
+    from uuid import uuid4
 
     from subgatekit import Period, Subscription, PlanInfo, BillingInfo
 
     plan_info = PlanInfo(
+        id=uuid4(),
         title='Specific plan',
         description='This PlanInfo was created for the next subscription only',
         level=50,

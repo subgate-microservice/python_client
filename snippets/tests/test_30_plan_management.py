@@ -7,7 +7,17 @@ client = get_client()
 
 @pytest.fixture()
 def fake_plan():
-    plan = client.plan_client().create_plan("Personal", 100, "USD")
+    from subgatekit import Plan, Period
+    plan = Plan(
+        title='Personal',
+        price=30,
+        currency='USD',
+        billing_cycle=Period.Quarterly,
+        description='This is a personal plan description',
+        level=10,
+        features='Any features you want to describe',
+    )
+    client.plan_client().create(plan)
     yield plan
 
 
@@ -121,7 +131,7 @@ def test_get_all_plans():
 
 
 def test_get_selected_plans():
-    plans = client.plan_client().get_selected_plans(
+    plans = client.plan_client().get_selected(
         ids=None,  # UUID | Iterable[UUID]
         order_by=[('created_at', 1)],
         skip=0,
@@ -144,7 +154,7 @@ def test_update_plan():
     # Update
     plan.price = 100
     plan.currency = 'EUR'
-    client.plan_client().update_plan(plan)
+    client.plan_client().update(plan)
 
 
 def test_delete_plan_by_id(fake_plan):
@@ -159,9 +169,6 @@ def test_delete_all_plans():
 
 
 def test_delete_selected_plans():
-    client.plan_client().delete_selected_plans(
+    client.plan_client().delete_selected(
         ids=None,  # UUID | Iterable[UUID]
-        order_by=[('created_at', 1)],
-        skip=0,
-        limit=100,
     )
