@@ -89,7 +89,6 @@ def serialize_subscription(subscription: Subscription) -> dict:
         "plan_info": plan_info,
         "usages": usages,
         "discounts": discounts,
-        "autorenew": subscription.autorenew,
         "fields": subscription.fields,
         "id": subscription_id,
         "status": subscription.status,

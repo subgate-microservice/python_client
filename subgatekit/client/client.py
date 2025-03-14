@@ -5,8 +5,13 @@ from subgatekit.client.webhook_client import SyncWebhookClient, AsyncWebhookClie
 
 
 class SubgateClient:
-    def __init__(self, base_url: str, apikey: str):
-        base_client = SyncBaseClient(base_url, apikey)
+    def __init__(
+            self,
+            base_url: str,
+            apikey_public_id: str,
+            apikey_secret: str
+    ):
+        base_client = SyncBaseClient(base_url, f"{apikey_public_id}:{apikey_secret}")
         self._plan_client = SyncPlanClient(base_client)
         self._sub_client = SyncSubscriptionClient(base_client)
         self._webhook_client = SyncWebhookClient(base_client)
@@ -22,8 +27,8 @@ class SubgateClient:
 
 
 class AsyncSubgateClient:
-    def __init__(self, base_url: str, apikey: str):
-        base_client = AsyncBaseClient(base_url, apikey)
+    def __init__(self, base_url: str, apikey_public_id: str, apikey_secret: str):
+        base_client = AsyncBaseClient(base_url, f"{apikey_public_id}:{apikey_secret}")
         self._plan_client = AsyncPlanClient(base_client)
         self._sub_client = AsyncSubscriptionClient(base_client)
         self._webhook_client = AsyncWebhookClient(base_client)

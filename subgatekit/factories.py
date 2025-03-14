@@ -36,13 +36,12 @@ def create_subscription_with_internal_fields(
         paused_from: Optional[datetime],
         usages: list[Usage],
         discounts: list[Discount],
-        autorenew: bool,
         fields: dict,
         created_at: datetime,
         updated_at: datetime,
         id: ID,
 ) -> Subscription:
-    instance = Subscription(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields, id)
+    instance = Subscription(subscriber_id, billing_info, plan_info, usages, discounts, fields, id)
     object.__setattr__(instance, "_status", status)
     object.__setattr__(instance, "_paused_from", paused_from)
     object.__setattr__(instance, "_created_at", created_at)

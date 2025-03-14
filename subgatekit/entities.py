@@ -335,11 +335,10 @@ class Subscription:
             plan_info: PlanInfo,
             usages: list[Usage] = None,
             discounts: list[Discount] = None,
-            autorenew: bool = False,
             fields: dict = None,
             id: ID = None,
     ):
-        self._validate(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields, id)
+        self._validate(subscriber_id, billing_info, plan_info, usages, discounts, fields, id)
 
         self._status = SubscriptionStatus.Active
         self._paused_from = None
@@ -351,17 +350,16 @@ class Subscription:
         self.id = id if id else uuid4()
         self.billing_info = billing_info
         self.plan_info = plan_info
-        self.autorenew = autorenew
         self.subscriber_id = subscriber_id
         self.fields = fields if fields else {}
 
     @classmethod
-    def from_plan(cls, plan: Plan, subscriber_id: str, autorenew: bool = False, fields: dict = None) -> Self:
+    def from_plan(cls, plan: Plan, subscriber_id: str, fields: dict = None) -> Self:
         billing_info = BillingInfo.from_plan(plan)
         plan_info = PlanInfo.from_plan(plan)
         usages = [Usage.from_usage_rate(rate) for rate in plan.usage_rates.get_all()]
         discounts = [copy(dis) for dis in plan.discounts.get_all()]
-        return cls(subscriber_id, billing_info, plan_info, usages, discounts, autorenew, fields)
+        return cls(subscriber_id, billing_info, plan_info, usages, discounts, fields)
 
     @property
     def status(self) -> SubscriptionStatus:
@@ -420,7 +418,6 @@ class Subscription:
             plan_info: PlanInfo,
             usages: list[Usage] = None,
             discounts: list[Discount] = None,
-            autorenew: bool = False,
             fields: dict = None,
             id: ID = None,
     ) -> None:
@@ -431,7 +428,6 @@ class Subscription:
             TypeValidator("Subscription.plan_info", plan_info, PlanInfo),
             ListTypeValidator("Subscription.usages", usages, Usage, True),
             ListTypeValidator("Subscription.discounts", discounts, Discount, True),
-            TypeValidator("Subscription.autorenew", autorenew, bool),
             FieldsValidator("Subscription.fields", fields, True),
         ]
         errors = []

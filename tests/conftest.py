@@ -7,6 +7,7 @@ import pytest_asyncio
 from subgatekit.client.client import SubgateClient
 
 CLIENT_BASE_URL = "http://localhost:3000/api/v1"
+CLIENT_APIKEY_ID = "TEST_APIKEY_PUBLIC_ID"
 CLIENT_APIKEY_VALUE = "TEST_APIKEY_VALUE"
 
 
@@ -19,7 +20,7 @@ def event_loop():
 
 
 @pytest_asyncio.fixture(params=[
-    SubgateClient(CLIENT_BASE_URL, CLIENT_APIKEY_VALUE),
+    SubgateClient(CLIENT_BASE_URL, CLIENT_APIKEY_ID, CLIENT_APIKEY_VALUE),
     # AsyncSubgateClient(CLIENT_BASE_URL, CLIENT_APIKEY_VALUE),
 ])
 async def client(request) -> SubgateClient:
@@ -28,7 +29,7 @@ async def client(request) -> SubgateClient:
 
 @pytest.fixture(scope="session")
 def sync_client():
-    sclient = SubgateClient(CLIENT_BASE_URL, CLIENT_APIKEY_VALUE)
+    sclient = SubgateClient(CLIENT_BASE_URL, CLIENT_APIKEY_ID, CLIENT_APIKEY_VALUE)
     yield sclient
 
 

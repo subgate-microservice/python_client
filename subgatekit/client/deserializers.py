@@ -106,7 +106,6 @@ def deserialize_subscription(data: dict) -> Subscription:
         paused_from=paused_from,
         usages=usages,
         discounts=discounts,
-        autorenew=data["autorenew"],
         fields=data["fields"],
         created_at=created_at,
         updated_at=updated_at,

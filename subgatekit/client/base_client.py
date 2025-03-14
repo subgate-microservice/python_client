@@ -11,7 +11,7 @@ class BaseClient:
         self._base_url = base_url
         self._apikey = apikey
         self._headers = {
-            "Apikey-Value": f"{apikey}",
+            "X-API-Key": f"{apikey}",
             "Content-Type": "application/json",
         }
 
