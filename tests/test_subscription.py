@@ -221,7 +221,7 @@ class TestDeleteSubscription:
 
         # Check
         with pytest.raises(ItemNotExist):
-            _ = client.subscription_client().get_by_id(simple_subscription.id)
+            _ = await wrapper(client.subscription_client().get_by_id(simple_subscription.id))
 
     @pytest.mark.asyncio
     async def test_delete_selected(self, simple_subscription, subscription_with_usages, subscription_with_discounts,

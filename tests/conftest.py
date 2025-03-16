@@ -4,7 +4,7 @@ from typing import Coroutine, Awaitable, Union
 import pytest
 import pytest_asyncio
 
-from subgatekit.client.client import SubgateClient
+from subgatekit.client.client import SubgateClient, AsyncSubgateClient
 
 CLIENT_BASE_URL = "http://localhost:3000/api/v1"
 CLIENT_APIKEY_ID = "TEST_APIKEY_PUBLIC_ID"
@@ -21,7 +21,7 @@ def event_loop():
 
 @pytest_asyncio.fixture(params=[
     SubgateClient(CLIENT_BASE_URL, CLIENT_APIKEY_ID, CLIENT_APIKEY_VALUE),
-    # AsyncSubgateClient(CLIENT_BASE_URL, CLIENT_APIKEY_VALUE),
+    AsyncSubgateClient(CLIENT_BASE_URL, CLIENT_APIKEY_ID, CLIENT_APIKEY_VALUE),
 ])
 async def client(request) -> SubgateClient:
     yield request.param
